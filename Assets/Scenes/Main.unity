@@ -702,6 +702,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 218662236}
+  - {fileID: 894209536}
   m_Father: {fileID: 1483549927}
   m_LocalEulerAnglesHint: {x: 0, y: 360.49, z: 0}
 --- !u!1 &814756404
@@ -813,6 +814,37 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
+--- !u!1 &894209535
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 894209536}
+  m_Layer: 0
+  m_Name: LaunchPad
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &894209536
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 894209535}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0.778}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 639816769}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &923479104
 GameObject:
   m_ObjectHideFlags: 0
@@ -1160,6 +1192,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rotationSpeed: 10
+  bulletPool: {fileID: 0}
+  bullet: {fileID: 1915099827}
+  activeBullet: {fileID: 0}
+  closestEnemy: {fileID: 1044871079}
+  bulletLifeSpan: 2
 --- !u!1 &1527593619
 GameObject:
   m_ObjectHideFlags: 0
@@ -1392,13 +1429,14 @@ GameObject:
   - component: {fileID: 1915099830}
   - component: {fileID: 1915099829}
   - component: {fileID: 1915099828}
+  - component: {fileID: 1915099832}
   m_Layer: 0
-  m_Name: Module
+  m_Name: Bullet
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!135 &1915099828
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -1488,6 +1526,23 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1915099832
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1915099827}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6cb51a7f10b848848a182c6e0fd7f551, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_BulletTypes:
+  - {fileID: 11400000, guid: 7e1de4735060e66459476b2dec087de9, type: 2}
+  - {fileID: 11400000, guid: 387e680a21d880c4285c88dcd3c0a4b8, type: 2}
+  dummy: {fileID: 1044871079}
+  bullet: {fileID: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
