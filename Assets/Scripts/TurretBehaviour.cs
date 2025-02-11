@@ -12,10 +12,10 @@ public class TurretBehaviour : MonoBehaviour
     [SerializeField] private ObjectPool bulletPool;
     [SerializeField] private GameObject bullet, activeBullet; 
     [SerializeField] private Transform closestEnemy; 
-    [SerializeField] private int bulletLifeSpan = 4;
+    [SerializeField] private int bulletLifeSpan = 10;
     private int currentBulletType= 0;
     private Enum bulletTypes;
-
+    [SerializeField]private float fireRate, baseFireRate;
 
 
     void Awake()
@@ -33,23 +33,26 @@ public class TurretBehaviour : MonoBehaviour
     }
     void Start()
     {
-        InvokeRepeating("AutoShoot",0f, 0.5f);
+        fireRate = baseFireRate;
+        //InvokeRepeating("AutoShoot",0f, 0.1f);
+        StartCoroutine(EAutoShoot());
     }
 
     void Update()
     {
         //AutoShoot();
-        //StartCoroutine(IAutoShoot());
-
+        //StartCoroutine(EAutoShoot());
         CanonLookat();
 
         if(Input.GetKey(KeyCode.Keypad1))
         {
             currentBulletType = 0;
+            fireRate = baseFireRate;
         }
         else if(Input.GetKey(KeyCode.Keypad2))
         {
             currentBulletType = 1;
+            fireRate = baseFireRate / 5f;
         }
 
     }
@@ -65,18 +68,23 @@ public class TurretBehaviour : MonoBehaviour
         Canon.rotation = Quaternion.Slerp(Canon.rotation, targetRotation, rotationSpeed * Time.deltaTime);
     }
 
-    private IEnumerator IAutoShoot()
+    private IEnumerator EAutoShoot()
     {
-        activeBullet = bulletPool.GetObjectFromPool(Launchpad.position);
-        yield return new WaitForSeconds(1f);
+        while(true)
+        {
+            AutoShoot();
+            yield return new WaitForSeconds(fireRate);
+        }
+
         
     }
 
     private void AutoShoot()
     {
         activeBullet = bulletPool.GetObjectFromPool(Launchpad.position);
+        if(!activeBullet)return;
         Bullet bullet = activeBullet.GetComponent<Bullet>();
-        bullet.Initialize(currentBulletType, WorldMousePos);
+        bullet.Initialize(currentBulletType, Launchpad.forward);
         StartCoroutine(PoolReset(activeBullet));
     }
 

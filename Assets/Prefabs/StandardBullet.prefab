@@ -12,7 +12,8 @@ GameObject:
   - component: {fileID: 1577129524521247851}
   - component: {fileID: 3707111712928271605}
   - component: {fileID: 4187881980723416749}
-  m_Layer: 0
+  - component: {fileID: 2668661551892824358}
+  m_Layer: 3
   m_Name: StandardBullet
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -97,7 +98,7 @@ SphereCollider:
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 1
   m_ExcludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -108,3 +109,21 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 0.5
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &2668661551892824358
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8756321785323108732}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6cb51a7f10b848848a182c6e0fd7f551, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_BulletTypes:
+  - {fileID: 11400000, guid: 7e1de4735060e66459476b2dec087de9, type: 2}
+  - {fileID: 11400000, guid: 387e680a21d880c4285c88dcd3c0a4b8, type: 2}
+  bullet: {fileID: 0}
+  isActive: 0
+  damages: 1

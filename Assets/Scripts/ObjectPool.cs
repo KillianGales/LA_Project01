@@ -8,7 +8,6 @@ public class ObjectPool : MonoBehaviour
     private GameObject prefab;  // The object to pool
     private int poolSize;  // Initial size of the pool
     private string poolName;
-    int numInst = 0; 
 
     private Queue<GameObject> pool = new Queue<GameObject>();
 
@@ -35,28 +34,20 @@ public class ObjectPool : MonoBehaviour
         
         GameObject obj;
 
-       if (pool.Count <= 0)  return null;
-           
-        obj = pool.Dequeue();
-        obj.SetActive(true);
-        obj.transform.position = position;
-        numInst += 1;
-        //Debug.Log( numInst + "Have Been instantiated");
-
-        return obj;
-
-       // else
-       // {
-            //Debug.Log("PoolEmpty");
-            //GameObject newObj = Instantiate(prefab);
-            //pool.Append(newObj);
-          
-            //obj = Instantiate(prefab);  // Create a new object if pool is empty
-      //  }
-/*
-        obj.SetActive(true);
-        obj.transform.position = position;
-        return obj;*/
+        if (pool.Count > 0)
+        {           
+            obj = pool.Dequeue();
+            obj.SetActive(true);
+            obj.transform.position = position;
+            return obj;
+        }
+        else
+        {
+            obj = Instantiate(prefab);
+            obj.SetActive(true);
+            obj.transform.position = position;
+            return obj;
+        }
     }
 
     public void ReturnObject(GameObject obj)
