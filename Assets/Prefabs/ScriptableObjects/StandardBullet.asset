@@ -14,4 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Speed: 2.5
   m_Material: {fileID: 2100000, guid: 312346a0a1600ea48bd7b1f0a0babd62, type: 2}
-  m_damages: 10
+  m_damages: 5

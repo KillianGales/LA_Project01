@@ -1,5 +1,7 @@
 using UnityEngine;
 using System.Collections;
+using System.Net.WebSockets;
+using System.Collections.Generic;
 
 public class Enemy : MonoBehaviour
 {
@@ -11,14 +13,21 @@ public class Enemy : MonoBehaviour
     public float colliderSize;
     public LayerMask collisionLayer;
     public bool move;
+    private float minDist;
+    private int closestTargetIndex;
+    [SerializeField] List<Transform> allTurrets; 
+    [SerializeField] float rotationSpeed;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void OnEnable()
+    void Start()
     {
-        GetTarget();
-
+        Vector3 directionToOrigin = Vector3.zero - transform.position;
+        
+        if (directionToOrigin != Vector3.zero)
+        {
+            transform.rotation = Quaternion.LookRotation(directionToOrigin);
+        }
     }
-//[ExecuteInEditMode]
+
     void OnDrawGizmosSelected()
     {
         Gizmos.DrawSphere(transform.position, capsuleRadius);
@@ -29,7 +38,12 @@ public class Enemy : MonoBehaviour
     {
         if(move)
         {
-            GoToTarget();
+           GoToTarget();
+        }
+
+        if(closestTarget == null)
+        {
+            GetTarget();
         }
 
         DetectObjects();
@@ -64,7 +78,6 @@ public class Enemy : MonoBehaviour
 
         life -= bullet.damages;
         bullet.gameObject.SetActive(false);
-        print(life);
         return;
 
     }
@@ -76,11 +89,31 @@ public class Enemy : MonoBehaviour
 
     void GetTarget()
     {
-        
-    }
+        allTurrets = GameManager.Instance.allTurrets;
 
+        for(int i = 0;i < allTurrets.Count; i++ )
+        {
+            float dist = Vector3.Distance(transform.position, allTurrets[i].position);
+
+            if(dist < minDist)
+            {
+                closestTargetIndex = i;
+            }
+        }
+
+        closestTarget = allTurrets[closestTargetIndex];
+
+    }
     void GoToTarget()
     {
+        if(closestTarget ==null) return;
+        Vector3 direction = closestTarget.position - transform.position;
+        direction.y = 0;
+
+        Quaternion newTar = Quaternion.LookRotation(direction);
+        transform.rotation = Quaternion.Slerp(transform.rotation, newTar, rotationSpeed * Time.deltaTime);
+
         transform.position += transform.forward*Time.deltaTime*movementSpeed;
+
     }
 }

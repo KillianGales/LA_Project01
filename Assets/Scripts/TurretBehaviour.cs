@@ -8,7 +8,7 @@ public class TurretBehaviour : MonoBehaviour
     private Transform Canon, Launchpad;
     Vector3 direction, WorldMousePos;
     Quaternion targetRotation;
-    [SerializeField] private float rotationSpeed;
+    [SerializeField] private float rotationSpeed, autoRotationSpeed;
     [SerializeField] private ObjectPool bulletPool;
     [SerializeField] private GameObject bullet, activeBullet; 
     [SerializeField] private Transform closestEnemy; 
@@ -22,17 +22,19 @@ public class TurretBehaviour : MonoBehaviour
     {
         Canon = transform.Find("Canon");
         Launchpad = Canon.transform.Find("LaunchPad");
+
         bulletPool = gameObject.AddComponent<ObjectPool>();
         bulletPool.InitializePool(bullet, 50);
-        
+        //GameManager.Instance.AddObject(transform);
     }
 
     void OnEnable()
     {
-
+        //GameManager.Instance.AddObject(transform);
     }
     void Start()
     {
+        GameManager.Instance.AddObject(transform);
         fireRate = baseFireRate;
         //InvokeRepeating("AutoShoot",0f, 0.1f);
         StartCoroutine(EAutoShoot());
@@ -42,7 +44,8 @@ public class TurretBehaviour : MonoBehaviour
     {
         //AutoShoot();
         //StartCoroutine(EAutoShoot());
-        CanonLookat();
+        //CanonLookat();
+        AutoRotate(autoRotationSpeed);
 
         if(Input.GetKey(KeyCode.Keypad1))
         {
@@ -77,6 +80,11 @@ public class TurretBehaviour : MonoBehaviour
         }
 
         
+    }
+
+    void AutoRotate(float speed)
+    {
+        Canon.rotation = Quaternion.Slerp(Canon.rotation,Quaternion.LookRotation(Launchpad.right), speed* Time.deltaTime);
     }
 
     private void AutoShoot()
