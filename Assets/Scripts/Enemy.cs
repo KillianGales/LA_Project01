@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections;
 using System.Net.WebSockets;
 using System.Collections.Generic;
+using UnityEngine.UI;
 
 public class Enemy : MonoBehaviour
 {
@@ -17,10 +18,14 @@ public class Enemy : MonoBehaviour
     private int closestTargetIndex;
     [SerializeField] List<Transform> allTurrets; 
     [SerializeField] float rotationSpeed;
+    [SerializeField] Slider healthBar;
+    [SerializeField] float lifeAnimSpeed;
 
     void Start()
     {
         Vector3 directionToOrigin = Vector3.zero - transform.position;
+        healthBar.maxValue = life;
+        healthBar.value = healthBar.maxValue;
         
         if (directionToOrigin != Vector3.zero)
         {
@@ -78,6 +83,7 @@ public class Enemy : MonoBehaviour
 
         life -= bullet.damages;
         bullet.gameObject.SetActive(false);
+        healthBar.value = life;//Mathf.Lerp(healthBar.value, life, lifeAnimSpeed*Time.deltaTime);
         return;
 
     }

@@ -6,6 +6,7 @@ public class GameManager : MonoBehaviour
     public static GameManager Instance { get; private set; }
 
     public List<Transform> allTurrets = new List<Transform>();
+    public Camera cam;
 
     private void Awake()
     {

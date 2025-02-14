@@ -44,8 +44,8 @@ public class TurretBehaviour : MonoBehaviour
     {
         //AutoShoot();
         //StartCoroutine(EAutoShoot());
-        //CanonLookat();
-        AutoRotate(autoRotationSpeed);
+        CanonLookat();
+        //AutoRotate(autoRotationSpeed);
 
         if(Input.GetKey(KeyCode.Keypad1))
         {
