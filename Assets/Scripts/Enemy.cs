@@ -3,6 +3,7 @@ using System.Collections;
 using System.Net.WebSockets;
 using System.Collections.Generic;
 using UnityEngine.UI;
+using TMPro;
 
 public class Enemy : MonoBehaviour
 {
@@ -20,12 +21,15 @@ public class Enemy : MonoBehaviour
     [SerializeField] float rotationSpeed;
     [SerializeField] Slider healthBar;
     [SerializeField] float lifeAnimSpeed;
+    [SerializeField] TMP_Text lifeText;
+    [SerializeField] float atkRange;
 
     void Start()
     {
         Vector3 directionToOrigin = Vector3.zero - transform.position;
         healthBar.maxValue = life;
         healthBar.value = healthBar.maxValue;
+        lifeText.SetText(life.ToString());
         
         if (directionToOrigin != Vector3.zero)
         {
@@ -33,10 +37,10 @@ public class Enemy : MonoBehaviour
         }
     }
 
-    void OnDrawGizmosSelected()
+ /*   void OnDrawGizmosSelected()
     {
         Gizmos.DrawSphere(transform.position, capsuleRadius);
-    }
+    }*/
 
     // Update is called once per frame
     void Update()
@@ -66,12 +70,14 @@ public class Enemy : MonoBehaviour
         {
             if (!hit.GetComponent<Bullet>()) return;
             Bullet bullet = hit.GetComponent<Bullet>();
-            if(life>0)
+
+            if(life > 0)
             {
                 TakeDamage(bullet);
-                return;
+                lifeText.SetText(life.ToString());
             }
-            else
+
+            if(life <=0)
             {
                 Die();
             }
@@ -119,7 +125,12 @@ public class Enemy : MonoBehaviour
         Quaternion newTar = Quaternion.LookRotation(direction);
         transform.rotation = Quaternion.Slerp(transform.rotation, newTar, rotationSpeed * Time.deltaTime);
 
-        transform.position += transform.forward*Time.deltaTime*movementSpeed;
+        if(atkRange*atkRange <= direction.sqrMagnitude)
+        {
+
+            transform.position += transform.forward*Time.deltaTime*movementSpeed;
+        } 
+
 
     }
 }

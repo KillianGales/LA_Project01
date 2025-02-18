@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
+using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
@@ -7,6 +8,10 @@ public class GameManager : MonoBehaviour
 
     public List<Transform> allTurrets = new List<Transform>();
     public Camera cam;
+   // public float turnTime, baseTurnTime;
+    public bool TurnAct = false;
+   // public Image timerSprite;
+    public List<GameObject> droppedMods;
 
     private void Awake()
     {
@@ -20,6 +25,9 @@ public class GameManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
+
+      //  turnTime = baseTurnTime;
+
     }
 
     public void AddObject(Transform obj)
@@ -37,4 +45,25 @@ public class GameManager : MonoBehaviour
             allTurrets.Remove(obj);
         }
     }
+
+    private void Update()
+    {
+        /*if(turnTime > 0)
+        {
+            TurnAct = false;
+            timerSprite.fillAmount = turnTime/baseTurnTime;
+            turnTime -= Time.deltaTime;
+        }
+        else
+        {
+            TurnAct = true;
+            turnTime = baseTurnTime;
+        }*/
+    }
+
+    public void AddModToPool(GameObject newMod)
+    {
+        droppedMods.Add(newMod); 
+    }
+
 }

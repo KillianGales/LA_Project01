@@ -1,11 +1,9 @@
 using UnityEngine;
 using UnityEditor;
-//using System.Numerics;
 
 public class Bullet : MonoBehaviour
 {
     [SerializeField] private BulletType[] m_BulletTypes;
-    //[SerializeField] private Transform dummy;
     private Vector3 m_target;
     private float m_bulletSpeed;
     public BulletType bullet;
@@ -23,6 +21,6 @@ public class Bullet : MonoBehaviour
 
     public void Update()
     {
-        transform.position += m_target*Time.deltaTime*m_bulletSpeed;//Vector3.Lerp(transform.position, m_target, bullet.m_Speed);
+        transform.position += m_target*Time.deltaTime*m_bulletSpeed;
     }
 }
