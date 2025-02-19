@@ -23,6 +23,9 @@ public class Enemy : MonoBehaviour
     [SerializeField] float lifeAnimSpeed;
     [SerializeField] TMP_Text lifeText;
     [SerializeField] float atkRange;
+    [SerializeField] int hitStrength;
+    [SerializeField] float hitRate;
+    private TurretBehaviour turretBe;
 
     void Start()
     {
@@ -37,14 +40,21 @@ public class Enemy : MonoBehaviour
         }
     }
 
- /*   void OnDrawGizmosSelected()
+
+ /*  void OnDrawGizmosSelected()
     {
+        Vector3 point1 = transform.position + Vector3.up * (capsuleHeight / 2);
+        Vector3 point2 = transform.position - Vector3.up * (capsuleHeight / 2);
+        CapsuleCollider coll = transform.GetComponent<CapsuleCollider>();
+        coll.radius = capsuleRadius;
+        coll.height = capsuleHeight;
         Gizmos.DrawSphere(transform.position, capsuleRadius);
     }*/
 
     // Update is called once per frame
     void Update()
     {
+
         if(move)
         {
            GoToTarget();
@@ -98,6 +108,16 @@ public class Enemy : MonoBehaviour
         gameObject.SetActive(false);
     }
 
+    private IEnumerator InflictDamage()
+    {
+        while(!move)
+        {
+            turretBe.life -= hitStrength;
+            yield return new WaitForSeconds(hitRate);
+        }
+
+    }
+
 
     void GetTarget()
     {
@@ -114,8 +134,15 @@ public class Enemy : MonoBehaviour
         }
 
         closestTarget = allTurrets[closestTargetIndex];
+        if(closestTarget != null)
+        {
+            turretBe = closestTarget.GetComponent<TurretBehaviour>();
+            move = true;
+        }
 
+        
     }
+
     void GoToTarget()
     {
         if(closestTarget ==null) return;
@@ -127,9 +154,16 @@ public class Enemy : MonoBehaviour
 
         if(atkRange*atkRange <= direction.sqrMagnitude)
         {
-
             transform.position += transform.forward*Time.deltaTime*movementSpeed;
-        } 
+        }
+        else
+        {
+            move = false;
+            StartCoroutine(InflictDamage());
+
+            return;
+        }
+
 
 
     }

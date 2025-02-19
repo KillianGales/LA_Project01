@@ -420,9 +420,9 @@ MonoBehaviour:
   closestTarget: {fileID: 0}
   movementSpeed: 1.2
   life: 100
-  capsuleHeight: 2
-  capsuleRadius: 1
-  colliderSize: 0.48
+  capsuleHeight: 5
+  capsuleRadius: 0.5
+  colliderSize: 2.02
   collisionLayer:
     serializedVersion: 2
     m_Bits: 8
@@ -433,6 +433,8 @@ MonoBehaviour:
   lifeAnimSpeed: 1
   lifeText: {fileID: 5262460509865708119}
   atkRange: 1.4
+  hitStrength: 50
+  hitRate: 1
 --- !u!1 &7870883897064513994
 GameObject:
   m_ObjectHideFlags: 0
