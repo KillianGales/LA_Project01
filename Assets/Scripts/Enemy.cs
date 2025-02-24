@@ -9,7 +9,7 @@ public class Enemy : MonoBehaviour
 {
     public Transform closestTarget;
     public float movementSpeed;
-    [SerializeField] private int life; 
+    [SerializeField] private int life, baselife; 
     public float capsuleHeight = 2.0f;  // Height of the capsule
     public float capsuleRadius = 1.0f;  // Radius of the capsule
     public float colliderSize;
@@ -26,10 +26,21 @@ public class Enemy : MonoBehaviour
     [SerializeField] int hitStrength;
     [SerializeField] float hitRate;
     private TurretBehaviour turretBe;
+    public ObjectPool pool; 
 
     void Start()
     {
+        Init();
+    }
+    void OnEnable()
+    {
+        Init();
+    }
+
+    void Init()
+    {
         Vector3 directionToOrigin = Vector3.zero - transform.position;
+        life = baselife;
         healthBar.maxValue = life;
         healthBar.value = healthBar.maxValue;
         lifeText.SetText(life.ToString());
@@ -38,18 +49,19 @@ public class Enemy : MonoBehaviour
         {
             transform.rotation = Quaternion.LookRotation(directionToOrigin);
         }
+
+        move = true;
     }
 
-
- /*  void OnDrawGizmosSelected()
-    {
-        Vector3 point1 = transform.position + Vector3.up * (capsuleHeight / 2);
-        Vector3 point2 = transform.position - Vector3.up * (capsuleHeight / 2);
-        CapsuleCollider coll = transform.GetComponent<CapsuleCollider>();
-        coll.radius = capsuleRadius;
-        coll.height = capsuleHeight;
-        Gizmos.DrawSphere(transform.position, capsuleRadius);
-    }*/
+    /*  void OnDrawGizmosSelected()
+       {
+           Vector3 point1 = transform.position + Vector3.up * (capsuleHeight / 2);
+           Vector3 point2 = transform.position - Vector3.up * (capsuleHeight / 2);
+           CapsuleCollider coll = transform.GetComponent<CapsuleCollider>();
+           coll.radius = capsuleRadius;
+           coll.height = capsuleHeight;
+           Gizmos.DrawSphere(transform.position, capsuleRadius);
+       }*/
 
     // Update is called once per frame
     void Update()
@@ -78,8 +90,10 @@ public class Enemy : MonoBehaviour
 
         foreach (Collider hit in hitObjects)
         {
+            
             if (!hit.GetComponent<Bullet>()) return;
             Bullet bullet = hit.GetComponent<Bullet>();
+
 
             if(life > 0)
             {
@@ -87,7 +101,7 @@ public class Enemy : MonoBehaviour
                 lifeText.SetText(life.ToString());
             }
 
-            if(life <=0)
+            if(life <= 0)
             {
                 Die();
             }
@@ -105,7 +119,8 @@ public class Enemy : MonoBehaviour
     }
     private void Die()
     {
-        gameObject.SetActive(false);
+        GameManager.Instance.CheckForDrop(transform);
+        pool.ReturnObject(gameObject);
     }
 
     private IEnumerator InflictDamage()

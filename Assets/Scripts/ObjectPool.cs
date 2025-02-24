@@ -21,7 +21,7 @@ public class ObjectPool : MonoBehaviour
         // Pre-instantiate objects and disable them
         for (int i = 0; i < poolSize; i++)
         {
-            GameObject obj = Instantiate(prefab);
+            GameObject obj = Instantiate(prefab, transform);
             obj.SetActive(false);
             pool.Enqueue(obj);
         }
@@ -43,7 +43,7 @@ public class ObjectPool : MonoBehaviour
         }
         else
         {
-            obj = Instantiate(prefab);
+            obj = Instantiate(prefab, transform);
             obj.SetActive(true);
             obj.transform.position = position;
             return obj;

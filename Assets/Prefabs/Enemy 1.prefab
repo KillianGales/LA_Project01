@@ -419,10 +419,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   closestTarget: {fileID: 0}
   movementSpeed: 1.2
-  life: 100
+  life: 0
+  baselife: 100
   capsuleHeight: 5
   capsuleRadius: 0.5
-  colliderSize: 2.02
+  colliderSize: 2
   collisionLayer:
     serializedVersion: 2
     m_Bits: 8
@@ -435,6 +436,7 @@ MonoBehaviour:
   atkRange: 1.4
   hitStrength: 50
   hitRate: 1
+  pool: {fileID: 0}
 --- !u!1 &7870883897064513994
 GameObject:
   m_ObjectHideFlags: 0

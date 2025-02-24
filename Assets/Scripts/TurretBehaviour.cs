@@ -139,7 +139,7 @@ public class TurretBehaviour : MonoBehaviour
             for (int i = 0; i < GameManager.Instance.droppedMods.Count; i++)
             {
 
-                if (obj == GameManager.Instance.droppedMods[i])
+                if (obj == GameManager.Instance.droppedMods[i]&& activeMods.Count<3)
                 {
                     ModPickup(obj);
                     GameManager.Instance.droppedMods.Remove(obj);

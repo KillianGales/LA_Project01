@@ -9,12 +9,14 @@ public class SpawnerManager : MonoBehaviour
     [SerializeField] private LineRenderer[] spawners;
     [SerializeField] List<Vector3> spawnPoints;
     [SerializeField] private GameObject enemy;
+    public AnimationCurve spawnCurve;
+    public float spawnIncr, maxSpawnRate;
 
     void Awake()
     {
         spawners = GetComponentsInChildren<LineRenderer>();
         enemyPool = gameObject.AddComponent<ObjectPool>();
-        enemyPool.InitializePool(enemy, 20);
+        enemyPool.InitializePool(enemy, 5);
     }
     void Start()
     {
@@ -38,6 +40,12 @@ public class SpawnerManager : MonoBehaviour
         while (true)
         {
             SpawnEnemy();
+            if(minSpawnInter > maxSpawnRate)
+            {
+                minSpawnInter -= spawnIncr;
+                maxSpawnInter -= spawnIncr;
+            }
+
             yield return new WaitForSeconds(Random.Range(minSpawnInter, maxSpawnInter));
         }
     }
@@ -46,5 +54,12 @@ public class SpawnerManager : MonoBehaviour
     {
         int index = Random.Range(0, spawnPoints.Count);
         GameObject newEnemy = enemyPool.GetObjectFromPool(spawnPoints[index]);
+        newEnemy.GetComponent<Enemy>().pool = enemyPool; 
     }
+
+    void Update()
+    {
+
+    }
+
 }

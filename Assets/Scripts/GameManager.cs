@@ -12,6 +12,7 @@ public class GameManager : MonoBehaviour
     public bool TurnAct = false;
    // public Image timerSprite;
     public List<GameObject> droppedMods;
+    [SerializeField] public List<SModRate> allMods;
 
     private void Awake()
     {
@@ -59,6 +60,28 @@ public class GameManager : MonoBehaviour
             TurnAct = true;
             turnTime = baseTurnTime;
         }*/
+    }
+    public void CheckForDrop(Transform dropPos)
+    {
+        if(allMods.Count>0)
+        {
+            float draw = Random.Range(0f,100f)/100;
+            //float cumul = 0f;
+
+            foreach(SModRate mod in allMods)
+            {
+                //cumul += mod.dropRate;
+                if(draw<= mod.dropRate)
+                {
+                    GameObject newMod = Instantiate(mod.mod, dropPos.position, dropPos.rotation, transform );
+                    allMods.Remove(mod);
+                    AddModToPool(newMod);
+                    return;
+                }
+
+            }
+
+        }
     }
 
     public void AddModToPool(GameObject newMod)
