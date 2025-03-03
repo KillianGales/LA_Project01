@@ -44,6 +44,22 @@ public class TurretBehaviour : MonoBehaviour
         bulletPool.InitializePool(bullet, 50);
     }
 
+    
+    void Start()
+    {
+        GameManager.Instance.AddObject(transform);
+
+        for (int i = 0; i<activeMods.Count; i++)
+        {
+            if(activeMods[i] != null)
+            {
+                InitBulletType(i, true);
+            }
+        }
+
+        //StartCoroutine(EAutoShoot());
+    }
+
     private void InitBulletType(int i, bool isStart)
     {
         Debug.Log(i);
@@ -85,20 +101,6 @@ public class TurretBehaviour : MonoBehaviour
     }
 
 
-    void Start()
-    {
-        GameManager.Instance.AddObject(transform);
-
-        for (int i = 0; i<activeMods.Count; i++)
-        {
-            if(activeMods[i] != null)
-            {
-                InitBulletType(i, true);
-            }
-        }
-
-        //StartCoroutine(EAutoShoot());
-    }
 
     void Update()
     {
@@ -141,6 +143,7 @@ public class TurretBehaviour : MonoBehaviour
 
                 if (obj == GameManager.Instance.droppedMods[i]&& activeMods.Count<3)
                 {
+                    obj.GetComponent<ModProfile>().dropped = false;
                     ModPickup(obj);
                     GameManager.Instance.droppedMods.Remove(obj);
                 }

@@ -102,7 +102,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   type: 1
   bulletType: {fileID: 11400000, guid: 387e680a21d880c4285c88dcd3c0a4b8, type: 2}
-  fireRate: 0.1
+  lifeSpan: 12
 --- !u!136 &144424561492510655
 CapsuleCollider:
   m_ObjectHideFlags: 0

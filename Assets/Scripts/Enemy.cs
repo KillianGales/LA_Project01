@@ -104,6 +104,7 @@ public class Enemy : MonoBehaviour
             if(life <= 0)
             {
                 Die();
+                return;
             }
         }
     }
@@ -119,6 +120,7 @@ public class Enemy : MonoBehaviour
     }
     private void Die()
     {
+        SpawnerManager.instance.EnemyDefeated();
         GameManager.Instance.CheckForDrop(transform);
         pool.ReturnObject(gameObject);
     }

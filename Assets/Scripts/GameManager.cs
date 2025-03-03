@@ -74,7 +74,7 @@ public class GameManager : MonoBehaviour
                 if(draw<= mod.dropRate)
                 {
                     GameObject newMod = Instantiate(mod.mod, dropPos.position, dropPos.rotation, transform );
-                    allMods.Remove(mod);
+                    //allMods.Remove(mod);
                     AddModToPool(newMod);
                     return;
                 }
@@ -86,7 +86,9 @@ public class GameManager : MonoBehaviour
 
     public void AddModToPool(GameObject newMod)
     {
-        droppedMods.Add(newMod); 
+        newMod.GetComponent<ModProfile>().dropped = true;
+        droppedMods.Add(newMod);
     }
+
 
 }
