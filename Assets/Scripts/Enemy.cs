@@ -20,13 +20,16 @@ public class Enemy : MonoBehaviour
     [SerializeField] List<Transform> allTurrets; 
     [SerializeField] float rotationSpeed;
     [SerializeField] Slider healthBar;
+    [SerializeField] Image healthFill;
     [SerializeField] float lifeAnimSpeed;
     [SerializeField] TMP_Text lifeText;
     [SerializeField] float atkRange;
     [SerializeField] int hitStrength;
     [SerializeField] float hitRate;
     private TurretBehaviour turretBe;
-    public ObjectPool pool; 
+    public ObjectPool pool;
+    //public GameObject lifeUI;
+    public EnemyType myType;
 
     void Start()
     {
@@ -39,6 +42,13 @@ public class Enemy : MonoBehaviour
 
     void Init()
     {
+        if(myType != null)
+        {
+            healthFill.color = myType.s_lifeUIColor;
+            baselife = myType.s_life;
+        }
+
+
         Vector3 directionToOrigin = Vector3.zero - transform.position;
         life = baselife;
         healthBar.maxValue = life;

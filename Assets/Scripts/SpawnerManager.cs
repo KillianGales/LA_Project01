@@ -13,20 +13,26 @@ public class SpawnerManager : MonoBehaviour
     public AnimationCurve spawnCurve;
     public float spawnIncr, maxSpawnRate, enemyCountIncr;
     [Header("Spawner Settings")]
-    [SerializeField]int remainingEnemies;
+    [SerializeField]int remainingEnemies, remainingMiniBoss;
     [SerializeField]int round;
     [SerializeField]int EnemiesToSpawn;
     [SerializeField]int baseEnemiesPerRound;
     [SerializeField]float roundEndBuffer;
     [SerializeField] TMP_Text roundText;
-    private int actualEnemies;
-
     public static SpawnerManager instance;
+    private Enemy currEnemy;
+    private EEnemytype enemyType;
+    private int miniBossToSpawn, TotalEnemiesToSpawn, TotalRoundEnemies;
+    public int baseMiniBossPerRound, firstMiniBossRound, typeToSpawn;
+    public int miniBossSpawnIndex;
+    public List<EnemyType> enType;
 
     void Awake()
     {
         instance = this;
         spawners = GetComponentsInChildren<LineRenderer>();
+
+        //Add it direct in editor
         enemyPool = gameObject.AddComponent<ObjectPool>();
         enemyPool.InitializePool(enemy, 10);
     }
@@ -44,18 +50,18 @@ public class SpawnerManager : MonoBehaviour
             }
         }
 
+        roundText.text = round.ToString();
         StartRound();
-       // StartCoroutine(SpawnRoutine());
+       // NextRound();
     }
 
     private IEnumerator SpawnRoutine()
     {
         
-        while(EnemiesToSpawn>0)
+        while(TotalEnemiesToSpawn>0)
         {
             SpawnEnemy();
-            EnemiesToSpawn--;
-            actualEnemies += 1;
+            TotalEnemiesToSpawn--;
             yield return new WaitForSeconds(Random.Range(minSpawnInter, maxSpawnInter));
         }
 
@@ -63,11 +69,11 @@ public class SpawnerManager : MonoBehaviour
 
     private void SpawnRateDecr()
     {
+        //refacto en courbe d'anim pour contrôler le spawn rate par round et over time
         if (minSpawnInter > maxSpawnRate)
         {
             minSpawnInter -= spawnIncr;
             maxSpawnInter -= spawnIncr;
-            //Debug.Log("Spawn rate is between" + minSpawnInter + " and " + maxSpawnInter);
         }
     }
 
@@ -75,24 +81,36 @@ public class SpawnerManager : MonoBehaviour
     {
 
         int index = Random.Range(0, spawnPoints.Count);
+
+        if(miniBossSpawnIndex == -1 && remainingMiniBoss > 0)
+        {
+            miniBossSpawnIndex = Random.Range(remainingMiniBoss, TotalEnemiesToSpawn);
+        }
+
+        //optim plus tard --> manage le pool depuis ici et ne pas get chaque enemy
         GameObject newEnemy = enemyPool.GetObjectFromPool(spawnPoints[index]);
-        newEnemy.GetComponent<Enemy>().pool = enemyPool;
+        currEnemy  = newEnemy.GetComponent<Enemy>();
+        currEnemy.pool = enemyPool;
 
+        if(miniBossSpawnIndex == TotalEnemiesToSpawn)
+        {
+            Debug.Log("Spawn MiniBoss at index " + miniBossSpawnIndex + "at the index " + TotalEnemiesToSpawn);
+            miniBossSpawnIndex = -1;
+            remainingMiniBoss--;
+            currEnemy.myType = enType[1];
+        }
+        else 
+        {
+            Debug.Log("Spawn Standard enemy at index " + TotalEnemiesToSpawn);
+            EnemiesToSpawn--;
+            currEnemy.myType = enType[0];
+        }
  
-    }
-
-    void Update()
-    {
-
     }
 
     public void EnemyDefeated()
     {
-       // if(remainingEnemies > 0)
-       // {
-            remainingEnemies-=1;
-            
-       // }
+        remainingEnemies--;
 
         if(remainingEnemies <= 0)
         {
@@ -100,11 +118,13 @@ public class SpawnerManager : MonoBehaviour
         }
     }
 
-
     IEnumerator NextRound()
     {
-        yield return new WaitForSeconds(roundEndBuffer);
         round++;
+        roundText.text = round.ToString();
+
+        yield return new WaitForSeconds(roundEndBuffer);
+
         Debug.Log("Starting Round : " + round);
         StartRound();
     }
@@ -112,9 +132,19 @@ public class SpawnerManager : MonoBehaviour
     private void StartRound()
     {
         EnemiesToSpawn  = Mathf.RoundToInt(baseEnemiesPerRound * enemyCountIncr * round);
-        remainingEnemies = EnemiesToSpawn;
-        roundText.text = round.ToString();
-        actualEnemies = 0;
+
+        if(round >= firstMiniBossRound)
+        {
+            remainingMiniBoss = Mathf.RoundToInt(baseMiniBossPerRound * round);
+        }
+
+
+        //remainingMiniBoss = miniBossToSpawn;
+        TotalEnemiesToSpawn = EnemiesToSpawn + remainingMiniBoss;
+        TotalRoundEnemies = EnemiesToSpawn + remainingMiniBoss;
+        remainingEnemies = TotalEnemiesToSpawn;
+
+        miniBossSpawnIndex = -1;
         SpawnRateDecr();
         StartCoroutine(SpawnRoutine());
 

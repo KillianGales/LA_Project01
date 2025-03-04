@@ -1624,12 +1624,15 @@ MonoBehaviour:
   allTurrets: []
   rotationSpeed: 3
   healthBar: {fileID: 37987460782608056}
+  healthFill: {fileID: 2148832290790281902}
   lifeAnimSpeed: 1
   lifeText: {fileID: 5262460509865708119}
   atkRange: 1.4
   hitStrength: 50
   hitRate: 1
   pool: {fileID: 0}
+  type: 0
+  myType: {fileID: 0}
 --- !u!1 &7595241832225883930
 GameObject:
   m_ObjectHideFlags: 0
