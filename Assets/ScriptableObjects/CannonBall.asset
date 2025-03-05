@@ -17,3 +17,7 @@ MonoBehaviour:
   m_damages: 50
   fireRate: 0.4
   behaviour: 0
+  colorOverride:
+    serializedVersion: 2
+    rgba: 4278250239
+  imageVisual: {fileID: -2413806693520163455, guid: 01f4df35280284c4aaed1f6749cde5c0, type: 3}

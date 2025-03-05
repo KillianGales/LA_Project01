@@ -10,5 +10,8 @@ public class BulletType : ScriptableObject
 
     public float fireRate;
     [SerializeField] public EBehaviour behaviour;
+    [Header("UI Setup")]
+    [SerializeField] public Color32 colorOverride;
+    public Sprite imageVisual;
 
 }

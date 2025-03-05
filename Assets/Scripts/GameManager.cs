@@ -13,6 +13,7 @@ public class GameManager : MonoBehaviour
    // public Image timerSprite;
     public List<GameObject> droppedMods;
     [SerializeField] public List<SModRate> allMods;
+    public List<ModProfile> startingMods;
 
     private void Awake()
     {
@@ -66,12 +67,12 @@ public class GameManager : MonoBehaviour
         if(allMods.Count>0)
         {
             float draw = Random.Range(0f,100f)/100;
-            //float cumul = 0f;
+            float cumul = 0f;
 
             foreach(SModRate mod in allMods)
             {
-                //cumul += mod.dropRate;
-                if(draw<= mod.dropRate)
+                cumul += mod.dropRate;
+                if(draw<= cumul/*mod.dropRate*/)
                 {
                     GameObject newMod = Instantiate(mod.mod, dropPos.position, dropPos.rotation, transform );
                     //allMods.Remove(mod);
@@ -90,5 +91,14 @@ public class GameManager : MonoBehaviour
         droppedMods.Add(newMod);
     }
 
+    public void TimePause()
+    {
+        Time.timeScale = 0f;
+    }
+
+    public void TimeResume()
+    {
+        Time.timeScale = 1.0f;
+    }
 
 }

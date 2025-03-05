@@ -14,5 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   s_lifeUIColor:
     serializedVersion: 2
-    rgba: 10495
-  s_life: 500
+    rgba: 4278200575
+  s_life: 200

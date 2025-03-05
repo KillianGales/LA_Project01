@@ -19,11 +19,17 @@ public class TurretBehaviour : MonoBehaviour
     //private int currentBulletType= 0;
     private EmodTypes bulletType;
     [SerializeField]private float fireRate, baseFireRate;
-    public List<GameObject> activeMods;
+    public List<ModProfile> activeMods;
     public GameObject Mod1;
     public LayerMask pickupLayer;
     public float life, baseLife;
     public Image lifeRep;
+    [SerializeField] public Dictionary<ModProfile,Coroutine> activeModRoutine = new Dictionary<ModProfile,Coroutine>();
+
+    [Header("UI Setup")]
+    [SerializeField] private List<Image> modImages;
+    [SerializeField] private GameObject currentModCanvas, NewModCanvas;
+    [SerializeField] private Image newModImage;
 
 
     void Awake()
@@ -35,10 +41,12 @@ public class TurretBehaviour : MonoBehaviour
         for (int i = 0; i < turretBase.childCount; i++)
         {
             sockets.Add(turretBase.GetChild(i));
+            //activeModRoutine.Add(StartCoroutine("EmptyRoutine"));
         }
 
         life = baseLife;
         
+        currentModCanvas.SetActive(false);
 
         bulletPool = gameObject.AddComponent<ObjectPool>();
         bulletPool.InitializePool(bullet, 50);
@@ -49,58 +57,104 @@ public class TurretBehaviour : MonoBehaviour
     {
         GameManager.Instance.AddObject(transform);
 
-        for (int i = 0; i<activeMods.Count; i++)
+        for (int i = 0; i<GameManager.Instance.startingMods.Count; i++)
         {
-            if(activeMods[i] != null)
+            if(GameManager.Instance.startingMods[i] != null)
             {
-                InitBulletType(i, true);
+                activeMods.Add(GameManager.Instance.startingMods[i]);
+                InitBulletType(activeMods[i], true, i);
             }
         }
 
         //StartCoroutine(EAutoShoot());
     }
 
-    private void InitBulletType(int i, bool isStart)
+    private void InitBulletType(ModProfile curModData, bool isStart, int index)
     {
-        Debug.Log(i);
+
         if (activeMods.Count > 0)
         {
             Transform curMod;
             if(isStart)
             {
-                curMod = Instantiate(activeMods[i]).transform;
+                curMod = Instantiate(curModData.gameObject).transform;
             }
             else
             {
-                curMod = activeMods[i].transform;
+                Debug.Log("New mod is checked at index " + index);
+                //activeMods.Add(curModData);
+                curMod = activeMods[index].transform;
             }
 
-            curMod.position = sockets[i].transform.position;
-            curMod.rotation = sockets[i].transform.rotation;
-            curMod.transform.SetParent(sockets[i].transform);
+            curMod.position = sockets[index].transform.position;
+            curMod.rotation = sockets[index].transform.rotation;
+            curMod.transform.SetParent(sockets[index].transform);
 
-            ModProfile curModData = curMod.GetComponent<ModProfile>();
+            //ModProfile curModData = curMod.GetComponent<ModProfile>();
 
+            SetModUI(index, curModData.bulletType);
+
+            switch(index)
+            {
+                case 0 :
+                    StopCoroutine(EAutoShoot00(curModData));
+                    StartCoroutine(EAutoShoot00(curModData));
+                    break;
+                case 1 :
+                    StopCoroutine(EAutoShoot01(curModData));
+                    StartCoroutine(EAutoShoot01(curModData));
+                    break;
+                case 2 :
+                    StopCoroutine(EAutoShoot02(curModData));
+                    StartCoroutine(EAutoShoot02(curModData));
+                    break;
+            }
+            /*Coroutine newCoroutine =*/
+            /*Dictionary sys for coroutines activeModRoutine[curModData] = newCoroutine;*/
+/*
             switch (curModData.type)
             {
                 case EmodTypes.CanonBall:
-                    //currentBulletType = 2;
-                    // fireRate = curModData.fireRate;
-                    StartCoroutine(EAutoShoot(curModData));
+
+                    /*activeModRoutine[index] = Coroutine newCoroutine =  StartCoroutine(EAutoShoot(curModData));
                     Debug.Log(name + "is set to fire CanonBall");
                     break;
+
                 case EmodTypes.FastBullet:
-                    //currentBulletType = 1;
-                    //fireRate = curModData.fireRate;
-                    StartCoroutine(EAutoShoot(curModData));
+
+                    /*activeModRoutine[index] = Coroutine newCoroutine =StartCoroutine(EAutoShoot(curModData));
                     Debug.Log(name + "is set to fire FastBullet");
                     break;
             }
-
+*/
         }
     }
+/*Dictionary sys for coroutines
+    void StopSpecificBullet(ModProfile modType)
+    {
+        if (activeModRoutine.ContainsKey(modType))
+        {
+            StopCoroutine(activeModRoutine[modType]);
+            activeModRoutine.Remove(modType);
+        }
+    }*/
+    /*
+    void ToggleBulletType(ModProfile modType)
+    {
+        if (activeMods.Contains(modType))
+        {
+            activeModRoutine.Remove(modType);
+            StopSpecificBullet(modType);
+            Debug.Log($"Stopped firing {modType}");
+        }
+        else
+        {
+            activeMods.Add(modType);
+            Debug.Log($"Started firing {modType}");
+        }
 
-
+    }*/
+    
 
     void Update()
     {
@@ -140,18 +194,35 @@ public class TurretBehaviour : MonoBehaviour
 
             for (int i = 0; i < GameManager.Instance.droppedMods.Count; i++)
             {
-
-                if (obj == GameManager.Instance.droppedMods[i]&& activeMods.Count<3)
+                if(obj == GameManager.Instance.droppedMods[i])
                 {
-                    obj.GetComponent<ModProfile>().dropped = false;
-                    ModPickup(obj);
-                    GameManager.Instance.droppedMods.Remove(obj);
-                }
+                    ModProfile curMod = obj.GetComponent<ModProfile>();
 
+                    if(activeMods.Count<3)
+                    {
+                        curMod.dropped = false;
+                        ModPickup(curMod);
+                        GameManager.Instance.droppedMods.Remove(obj);
+                    }
+                    else if (activeMods.Count>=3)
+                    {
+                        GameManager.Instance.TimePause();
+                        UIDisplayNewMod(curMod.bulletType);
+                        ActivateNewModCanvas();
+                        ActivateCurrentModCanvas();
+                    }
+                }
             }
 
         }
     }
+
+    private IEnumerator EmptyRoutine()
+    {
+        yield break;
+    }
+
+
 
     private void CanonLookat()
     {
@@ -164,7 +235,12 @@ public class TurretBehaviour : MonoBehaviour
         Canon.rotation = Quaternion.Slerp(Canon.rotation, targetRotation, rotationSpeed * Time.deltaTime);
     }
 
-    private IEnumerator EAutoShoot(ModProfile curModData)
+/// <summary>
+/// //Start of Coroutines section//////
+/// </summary>
+//</param>
+
+    private IEnumerator EAutoShoot00(ModProfile curModData)
     {
         GameObject activeBullet;
         Bullet Ibullet;
@@ -180,10 +256,51 @@ public class TurretBehaviour : MonoBehaviour
 
             //AutoShoot();
             yield return new WaitForSeconds(fireRate);
-        }
-
-        
+        }  
     }
+
+    private IEnumerator EAutoShoot01(ModProfile curModData)
+    {
+        GameObject activeBullet;
+        Bullet Ibullet;
+        while(true)
+        {
+            fireRate = curModData.bulletType.fireRate;
+
+            activeBullet = bulletPool.GetObjectFromPool(Launchpad.position);
+            if(!activeBullet)break;
+            Ibullet = activeBullet.GetComponent<Bullet>();
+            Ibullet.Initialize(Launchpad.forward, curModData.bulletType);
+            StartCoroutine(PoolReset(activeBullet));
+
+            //AutoShoot();
+            yield return new WaitForSeconds(fireRate);
+        }  
+    }
+
+    private IEnumerator EAutoShoot02(ModProfile curModData)
+    {
+        GameObject activeBullet;
+        Bullet Ibullet;
+        while(true)
+        {
+            fireRate = curModData.bulletType.fireRate;
+
+            activeBullet = bulletPool.GetObjectFromPool(Launchpad.position);
+            if(!activeBullet)break;
+            Ibullet = activeBullet.GetComponent<Bullet>();
+            Ibullet.Initialize(Launchpad.forward, curModData.bulletType);
+            StartCoroutine(PoolReset(activeBullet));
+
+            //AutoShoot();
+            yield return new WaitForSeconds(fireRate);
+        }  
+    }
+
+/// <summary>
+/// //End of Coroutines section//////
+/// </summary>
+//</param>
 
     void AutoRotate(float speed)
     {
@@ -214,11 +331,68 @@ public class TurretBehaviour : MonoBehaviour
         AutoShoot();
     }
 */
-    void ModPickup(GameObject mod)
+    void ModPickup(ModProfile mod)
     {
-        mod.layer = 0;
+        mod.gameObject.layer = 0;
         activeMods.Add(mod);
-        InitBulletType(activeMods.Count-1, false);
+
+        //int index = activeMods.Count;
+
+        /* Other non working logic to check an empty socket - Fix by putting an empty gameobject in empty sockets
+        for(int i = 0; i < 2; i++)
+        {
+            if(activeMods[i] == null)
+            {
+                index = i;
+            }
+
+        }*/
+
+        //
+        InitBulletType(mod, false, activeMods.Count-1);
+        Debug.Log("Starting the " + (activeMods.Count-1) + "th coroutine");
+        //InitBulletType(activeMods.Count-1, false);
+        
+    }
+
+    private void ActivateCurrentModCanvas()
+    {
+        currentModCanvas.SetActive(true);
+    }
+
+    private void ActivateNewModCanvas()
+    {
+        NewModCanvas.SetActive(true);
+    }
+
+    public void DeactivateCurrentModCanvas()
+    {
+        currentModCanvas.SetActive(false);
+        Time.timeScale = 1.0f;
+    }
+    public void DeactivateNewModCanvas()
+    {
+        NewModCanvas.SetActive(false);
+        Time.timeScale = 1.0f;
+    }
+
+    void SetModUI(int index, BulletType bulletType)
+    {
+        modImages[index].color = bulletType.colorOverride;
+        modImages[index].sprite = bulletType.imageVisual;
+    }
+
+    void UIDisplayNewMod(BulletType bulletType)
+    {
+        newModImage.color = bulletType.colorOverride;
+        newModImage.sprite = bulletType.imageVisual;
+    }
+
+    public void SwitchMod(ModProfile newMod, int index)
+    {
+        //activeMods[index].gameObject;
+        //StopSpecificBullet();
+        InitBulletType(newMod, false, index);
     }
 
 }

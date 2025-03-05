@@ -94,14 +94,14 @@ public class SpawnerManager : MonoBehaviour
 
         if(miniBossSpawnIndex == TotalEnemiesToSpawn)
         {
-            Debug.Log("Spawn MiniBoss at index " + miniBossSpawnIndex + "at the index " + TotalEnemiesToSpawn);
+ //           Debug.Log("Spawn MiniBoss at index " + miniBossSpawnIndex + "at the index " + TotalEnemiesToSpawn);
             miniBossSpawnIndex = -1;
             remainingMiniBoss--;
             currEnemy.myType = enType[1];
         }
         else 
         {
-            Debug.Log("Spawn Standard enemy at index " + TotalEnemiesToSpawn);
+//            Debug.Log("Spawn Standard enemy at index " + TotalEnemiesToSpawn);
             EnemiesToSpawn--;
             currEnemy.myType = enType[0];
         }
