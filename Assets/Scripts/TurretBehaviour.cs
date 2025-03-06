@@ -20,10 +20,11 @@ public class TurretBehaviour : MonoBehaviour
     private EmodTypes bulletType;
     [SerializeField]private float fireRate, baseFireRate;
     public List<ModProfile> activeMods;
-    public GameObject Mod1;
+    public ModProfile newMod;
     public LayerMask pickupLayer;
     public float life, baseLife;
     public Image lifeRep;
+    public List<Coroutine> shootRoutines = new List<Coroutine>(new Coroutine[3]);
     [SerializeField] public Dictionary<ModProfile,Coroutine> activeModRoutine = new Dictionary<ModProfile,Coroutine>();
 
     [Header("UI Setup")]
@@ -94,20 +95,28 @@ public class TurretBehaviour : MonoBehaviour
 
             SetModUI(index, curModData.bulletType);
 
+            if(shootRoutines[index] != null) StopCoroutine(shootRoutines[index]);
+
             switch(index)
             {
                 case 0 :
-                    StopCoroutine(EAutoShoot00(curModData));
-                    StartCoroutine(EAutoShoot00(curModData));
+                    //StopCoroutine(shootRoutines[0]);
+                    shootRoutines[0] = StartCoroutine(EAutoShoot00(curModData));
                     break;
                 case 1 :
-                    StopCoroutine(EAutoShoot01(curModData));
-                    StartCoroutine(EAutoShoot01(curModData));
+                    //StopCoroutine(shootRoutines[1]);
+                    shootRoutines[1] = StartCoroutine(EAutoShoot01(curModData));
                     break;
                 case 2 :
-                    StopCoroutine(EAutoShoot02(curModData));
-                    StartCoroutine(EAutoShoot02(curModData));
+                    //StopCoroutine(shootRoutines[2]);
+                    shootRoutines[2] = StartCoroutine(EAutoShoot02(curModData));
                     break;
+            }
+
+            newMod = null;
+            for(int i = 0 ; i < shootRoutines.Count; i++)
+            {
+                Debug.Log(i + "th routine is " + shootRoutines[i]);
             }
             /*Coroutine newCoroutine =*/
             /*Dictionary sys for coroutines activeModRoutine[curModData] = newCoroutine;*/
@@ -196,18 +205,18 @@ public class TurretBehaviour : MonoBehaviour
             {
                 if(obj == GameManager.Instance.droppedMods[i])
                 {
-                    ModProfile curMod = obj.GetComponent<ModProfile>();
+                    newMod = obj.GetComponent<ModProfile>();
+                    newMod.dropped = false;
+                    GameManager.Instance.droppedMods.Remove(obj);
 
                     if(activeMods.Count<3)
                     {
-                        curMod.dropped = false;
-                        ModPickup(curMod);
-                        GameManager.Instance.droppedMods.Remove(obj);
+                        ModPickup(newMod);
                     }
                     else if (activeMods.Count>=3)
                     {
                         GameManager.Instance.TimePause();
-                        UIDisplayNewMod(curMod.bulletType);
+                        UIDisplayNewMod(newMod.bulletType);
                         ActivateNewModCanvas();
                         ActivateCurrentModCanvas();
                     }
@@ -388,10 +397,15 @@ public class TurretBehaviour : MonoBehaviour
         newModImage.sprite = bulletType.imageVisual;
     }
 
-    public void SwitchMod(ModProfile newMod, int index)
+    public void SwitchMod(int index)
     {
         //activeMods[index].gameObject;
         //StopSpecificBullet();
+        if(!newMod) return; 
+        newMod.gameObject.layer = 0;
+        Destroy(sockets[index].GetChild(0).gameObject);
+        activeMods[index] = newMod;
+
         InitBulletType(newMod, false, index);
     }
 

@@ -965,7 +965,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7865843002178677165, guid: c19a23e1801bcb3499dc408b2abbe416, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8638993190856279868, guid: c19a23e1801bcb3499dc408b2abbe416, type: 3}
       propertyPath: dropped
@@ -976,6 +976,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c19a23e1801bcb3499dc408b2abbe416, type: 3}
+--- !u!1 &369780485 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7865843002178677165, guid: c19a23e1801bcb3499dc408b2abbe416, type: 3}
+  m_PrefabInstance: {fileID: 369780484}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &484090287
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2818,7 +2823,7 @@ MonoBehaviour:
   baseFireRate: 5
   activeMods:
   - {fileID: 567531568972062678, guid: b8e65603120fb1c478bb544866bab34e, type: 3}
-  Mod1: {fileID: 0}
+  newMod: {fileID: 0}
   pickupLayer:
     serializedVersion: 2
     m_Bits: 64
@@ -3820,13 +3825,16 @@ MonoBehaviour:
   TurnAct: 0
   droppedMods:
   - {fileID: 1226722287}
+  - {fileID: 369780485}
   allMods:
   - mod: {fileID: 7865843002178677165, guid: c19a23e1801bcb3499dc408b2abbe416, type: 3}
     dropRate: 0.01
   - mod: {fileID: 567531568972062678, guid: b8e65603120fb1c478bb544866bab34e, type: 3}
     dropRate: 0.03
   startingMods:
-  - {fileID: 8638993190856279868, guid: c19a23e1801bcb3499dc408b2abbe416, type: 3}
+  - {fileID: 8105090991724504947, guid: b8e65603120fb1c478bb544866bab34e, type: 3}
+  - {fileID: 8105090991724504947, guid: b8e65603120fb1c478bb544866bab34e, type: 3}
+  - {fileID: 8105090991724504947, guid: b8e65603120fb1c478bb544866bab34e, type: 3}
 --- !u!4 &1820976221
 Transform:
   m_ObjectHideFlags: 0
@@ -4014,13 +4022,13 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 5720150203653382263}
         m_TargetAssemblyTypeName: TurretBehaviour, Assembly-CSharp
-        m_MethodName: 
-        m_Mode: 1
+        m_MethodName: SwitchMod
+        m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
@@ -4159,14 +4167,14 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 5720150203653382263}
         m_TargetAssemblyTypeName: TurretBehaviour, Assembly-CSharp
-        m_MethodName: 
-        m_Mode: 1
+        m_MethodName: SwitchMod
+        m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 1
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0
@@ -4304,14 +4312,14 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 5720150203653382263}
         m_TargetAssemblyTypeName: TurretBehaviour, Assembly-CSharp
-        m_MethodName: 
-        m_Mode: 1
+        m_MethodName: SwitchMod
+        m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 2
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0
@@ -4537,7 +4545,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1931148300
 RectTransform:
   m_ObjectHideFlags: 0
@@ -4816,7 +4824,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 567531568972062678, guid: b8e65603120fb1c478bb544866bab34e, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6641984729018818818, guid: b8e65603120fb1c478bb544866bab34e, type: 3}
       propertyPath: m_LocalPosition.x
@@ -5099,6 +5107,18 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+      - m_Target: {fileID: 1931148299}
+        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+        m_MethodName: SetActive
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 1
+        m_CallState: 2
 --- !u!114 &2099972468
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5347,7 +5367,7 @@ MonoBehaviour:
   fireRate: 0
   baseFireRate: 5
   activeMods: []
-  Mod1: {fileID: 0}
+  newMod: {fileID: 0}
   pickupLayer:
     serializedVersion: 2
     m_Bits: 64
