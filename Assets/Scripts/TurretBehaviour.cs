@@ -25,6 +25,7 @@ public class TurretBehaviour : MonoBehaviour
     public float life, baseLife;
     public Image lifeRep;
     public List<Coroutine> shootRoutines = new List<Coroutine>(new Coroutine[3]);
+    private bool checkingForMods;
     [SerializeField] public Dictionary<ModProfile,Coroutine> activeModRoutine = new Dictionary<ModProfile,Coroutine>();
 
     [Header("UI Setup")]
@@ -46,6 +47,7 @@ public class TurretBehaviour : MonoBehaviour
         }
 
         life = baseLife;
+        checkingForMods = true;
         
         currentModCanvas.SetActive(false);
 
@@ -179,7 +181,7 @@ public class TurretBehaviour : MonoBehaviour
         }
 
 
-        if(GameManager.Instance.droppedMods.Count > 0)
+        if(GameManager.Instance.droppedMods.Count > 0 && checkingForMods)
         {
             CheckForMod();
         }
@@ -216,6 +218,7 @@ public class TurretBehaviour : MonoBehaviour
                     else if (activeMods.Count>=3)
                     {
                         GameManager.Instance.TimePause();
+                        checkingForMods = false;
                         UIDisplayNewMod(newMod.bulletType);
                         ActivateNewModCanvas();
                         ActivateCurrentModCanvas();
@@ -363,6 +366,34 @@ public class TurretBehaviour : MonoBehaviour
         //InitBulletType(activeMods.Count-1, false);
         
     }
+    public void OpenPauseMenu()
+    {
+        checkingForMods = false;
+        ActivateCurrentModCanvas();
+        Time.timeScale = 0.0f;
+    }
+    public void ClosePauseMenu()
+    {
+        checkingForMods = true;
+        DeactivateCurrentModCanvas();
+        Time.timeScale = 1.0f;
+    }
+
+    public void OpenSwitchMenu()
+    {
+        checkingForMods = false;
+        ActivateCurrentModCanvas();
+        ActivateNewModCanvas();
+        Time.timeScale = 0.0f;
+    }
+    public void CloseSwitchMenu()
+    {
+        checkingForMods = true;
+        DeactivateCurrentModCanvas();
+        DeactivateNewModCanvas();
+        Time.timeScale = 1.0f;
+    }
+
 
     private void ActivateCurrentModCanvas()
     {
@@ -382,6 +413,7 @@ public class TurretBehaviour : MonoBehaviour
     public void DeactivateNewModCanvas()
     {
         NewModCanvas.SetActive(false);
+        checkingForMods = true;
         Time.timeScale = 1.0f;
     }
 
@@ -401,7 +433,8 @@ public class TurretBehaviour : MonoBehaviour
     {
         //activeMods[index].gameObject;
         //StopSpecificBullet();
-        if(!newMod) return; 
+        if(!newMod) return;
+        checkingForMods = true;
         newMod.gameObject.layer = 0;
         Destroy(sockets[index].GetChild(0).gameObject);
         activeMods[index] = newMod;
