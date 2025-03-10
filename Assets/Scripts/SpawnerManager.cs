@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Collections;
 using TMPro;
+using System.Linq;
 
 public class SpawnerManager : MonoBehaviour
 {
@@ -25,19 +26,40 @@ public class SpawnerManager : MonoBehaviour
     private int miniBossToSpawn, TotalEnemiesToSpawn, TotalRoundEnemies;
     public int baseMiniBossPerRound, firstMiniBossRound, typeToSpawn;
     public int miniBossSpawnIndex;
-    public List<EnemyType> enType;
+    public List<EnemyType> enType;    
+    public const string HIGHEST_ROUND_KEY = "highestRound";
+    public int currentHighest;
 
     void Awake()
     {
-        instance = this;
-        spawners = GetComponentsInChildren<LineRenderer>();
+        if (instance == null)
+        {
+            instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+
+        Debug.Log("SpawnerManagerAwake");
+
+      //  if(spawners.Length <1)
+        //{
+            spawners = GetComponentsInChildren<LineRenderer>();
+        //}
+
 
         //Add it direct in editor
         enemyPool = gameObject.AddComponent<ObjectPool>();
         enemyPool.InitializePool(enemy, 10);
+
+        currentHighest = GetHighestRound();
+
     }
     void Start()
     {
+        Debug.Log("SpawnerManagerStart");
+
         foreach(var spawn in spawners)
         {
             Vector3[] pointArray = new Vector3[spawn.positionCount];
@@ -50,10 +72,19 @@ public class SpawnerManager : MonoBehaviour
             }
         }
 
+        //cleanStats();
+
+        round = GameManager.Instance.startingRound;
+
         roundText.text = round.ToString();
         StartRound();
        // NextRound();
     }
+
+    /*void cleanStats()
+    {
+        TotalEnemiesToSpawn = 0;
+    }*/
 
     private IEnumerator SpawnRoutine()
     {
@@ -123,6 +154,11 @@ public class SpawnerManager : MonoBehaviour
         round++;
         roundText.text = round.ToString();
 
+        if(round%5 ==0)
+        {
+            SaveHighestRound();
+        }
+
         yield return new WaitForSeconds(roundEndBuffer);
 
         Debug.Log("Starting Round : " + round);
@@ -149,4 +185,24 @@ public class SpawnerManager : MonoBehaviour
         StartCoroutine(SpawnRoutine());
 
     }
+
+    public void SaveHighestRound()
+    {
+        int highestRound = PlayerPrefs.GetInt(HIGHEST_ROUND_KEY, 0);
+
+        if(round > highestRound)
+        {
+            PlayerPrefs.SetInt(HIGHEST_ROUND_KEY, round);
+            PlayerPrefs.Save();
+            Debug.Log($"New highest round saved: {round}");
+        }
+    }
+
+    public int GetHighestRound()
+    {
+        return PlayerPrefs.GetInt(HIGHEST_ROUND_KEY, 0);
+    }
+
+
+
 }

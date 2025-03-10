@@ -1,6 +1,8 @@
 using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.UI;
+using TMPro;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
@@ -14,14 +16,25 @@ public class GameManager : MonoBehaviour
     public List<GameObject> droppedMods;
     [SerializeField] public List<SModRate> allMods;
     public List<ModProfile> startingMods;
+   // public TMP_Text roundText;
+    [SerializeField] private int highestRound;
+    public int startingRound;
+    public int GetHighestRound()
+    {
+        return PlayerPrefs.GetInt("highestRound", 0);
+    }
 
     private void Awake()
     {
+       //cam = FindFirstObjectByType<Camera>();
+
+        highestRound = GetHighestRound();
 
         if (Instance == null)
         {
             Instance = this;
             DontDestroyOnLoad(gameObject);
+            SceneManager.sceneLoaded += OnSceneLoaded;
         }
         else
         {
@@ -30,6 +43,13 @@ public class GameManager : MonoBehaviour
 
       //  turnTime = baseTurnTime;
 
+    }
+
+    void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        cam = FindFirstObjectByType<Camera>();
+        allTurrets.Clear();
+        TimeResume();
     }
 
     public void AddObject(Transform obj)
@@ -50,17 +70,7 @@ public class GameManager : MonoBehaviour
 
     private void Update()
     {
-        /*if(turnTime > 0)
-        {
-            TurnAct = false;
-            timerSprite.fillAmount = turnTime/baseTurnTime;
-            turnTime -= Time.deltaTime;
-        }
-        else
-        {
-            TurnAct = true;
-            turnTime = baseTurnTime;
-        }*/
+        
     }
     public void CheckForDrop(Transform dropPos)
     {
@@ -91,6 +101,11 @@ public class GameManager : MonoBehaviour
         droppedMods.Add(newMod);
     }
 
+  /*  public void GetStartingRound (int i)
+    {
+        startingRound = i;
+    }*/
+
     public void TimePause()
     {
         Time.timeScale = 0f;
@@ -100,5 +115,7 @@ public class GameManager : MonoBehaviour
     {
         Time.timeScale = 1.0f;
     }
+
+
 
 }

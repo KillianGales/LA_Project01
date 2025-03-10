@@ -30,7 +30,7 @@ public class TurretBehaviour : MonoBehaviour
 
     [Header("UI Setup")]
     [SerializeField] private List<Image> modImages;
-    [SerializeField] private GameObject currentModCanvas, NewModCanvas;
+    [SerializeField] private GameObject currentModCanvas, NewModCanvas, pauseButton;
     [SerializeField] private Image newModImage;
 
 
@@ -116,10 +116,10 @@ public class TurretBehaviour : MonoBehaviour
             }
 
             newMod = null;
-            for(int i = 0 ; i < shootRoutines.Count; i++)
+            /*for(int i = 0 ; i < shootRoutines.Count; i++)
             {
                 Debug.Log(i + "th routine is " + shootRoutines[i]);
-            }
+            }*/
             /*Coroutine newCoroutine =*/
             /*Dictionary sys for coroutines activeModRoutine[curModData] = newCoroutine;*/
 /*
@@ -171,6 +171,7 @@ public class TurretBehaviour : MonoBehaviour
     {
         //AutoShoot();
         CanonLookat();
+        
         if(life>0)
         {
             lifeRep.fillAmount = life/baseLife;
@@ -185,12 +186,6 @@ public class TurretBehaviour : MonoBehaviour
         {
             CheckForMod();
         }
-
-       /* if(GameManager.Instance.TurnAct)
-        {
-            TurnAct();
-        }*/
-
 
     }
 
@@ -220,6 +215,7 @@ public class TurretBehaviour : MonoBehaviour
                         GameManager.Instance.TimePause();
                         checkingForMods = false;
                         UIDisplayNewMod(newMod.bulletType);
+                        DeactivatePauseButton();
                         ActivateNewModCanvas();
                         ActivateCurrentModCanvas();
                     }
@@ -417,6 +413,11 @@ public class TurretBehaviour : MonoBehaviour
         Time.timeScale = 1.0f;
     }
 
+    public void DeactivatePauseButton()
+    {
+        pauseButton.SetActive(false);
+    }
+
     void SetModUI(int index, BulletType bulletType)
     {
         modImages[index].color = bulletType.colorOverride;
@@ -440,6 +441,13 @@ public class TurretBehaviour : MonoBehaviour
         activeMods[index] = newMod;
 
         InitBulletType(newMod, false, index);
+    }
+
+    public void CancelSwitch()
+    {
+        if(!newMod) return;
+        Destroy(newMod.gameObject);
+        checkingForMods = true;
     }
 
 }
