@@ -15,7 +15,6 @@ public class TurretBehaviour : MonoBehaviour
     [SerializeField] private ObjectPool bulletPool;
     [SerializeField] private GameObject bullet/*, activeBullet*/; 
     [SerializeField] private Transform closestEnemy; 
-    [SerializeField] private int bulletLifeSpan = 10;
     //private int currentBulletType= 0;
     private EmodTypes bulletType;
     [SerializeField]private float fireRate, baseFireRate;
@@ -27,6 +26,7 @@ public class TurretBehaviour : MonoBehaviour
     public List<Coroutine> shootRoutines = new List<Coroutine>(new Coroutine[3]);
     private bool checkingForMods;
     [SerializeField] public Dictionary<ModProfile,Coroutine> activeModRoutine = new Dictionary<ModProfile,Coroutine>();
+    public Transform outOfBoundsBulletPool;
 
     [Header("UI Setup")]
     [SerializeField] private List<Image> modImages;
@@ -52,7 +52,7 @@ public class TurretBehaviour : MonoBehaviour
         currentModCanvas.SetActive(false);
 
         bulletPool = gameObject.AddComponent<ObjectPool>();
-        bulletPool.InitializePool(bullet, 50);
+        bulletPool.InitializePool(bullet, 50, outOfBoundsBulletPool);
     }
 
     
@@ -171,7 +171,7 @@ public class TurretBehaviour : MonoBehaviour
     {
         //AutoShoot();
         CanonLookat();
-        
+
         if(life>0)
         {
             lifeRep.fillAmount = life/baseLife;
@@ -260,7 +260,7 @@ public class TurretBehaviour : MonoBehaviour
             if(!activeBullet)break;
             Ibullet = activeBullet.GetComponent<Bullet>();
             Ibullet.Initialize(Launchpad.forward, curModData.bulletType);
-            StartCoroutine(PoolReset(activeBullet));
+            StartCoroutine(PoolReset(activeBullet, Ibullet.lifeSpan));
 
             //AutoShoot();
             yield return new WaitForSeconds(fireRate);
@@ -279,7 +279,7 @@ public class TurretBehaviour : MonoBehaviour
             if(!activeBullet)break;
             Ibullet = activeBullet.GetComponent<Bullet>();
             Ibullet.Initialize(Launchpad.forward, curModData.bulletType);
-            StartCoroutine(PoolReset(activeBullet));
+            StartCoroutine(PoolReset(activeBullet, Ibullet.lifeSpan));
 
             //AutoShoot();
             yield return new WaitForSeconds(fireRate);
@@ -298,7 +298,7 @@ public class TurretBehaviour : MonoBehaviour
             if(!activeBullet)break;
             Ibullet = activeBullet.GetComponent<Bullet>();
             Ibullet.Initialize(Launchpad.forward, curModData.bulletType);
-            StartCoroutine(PoolReset(activeBullet));
+            StartCoroutine(PoolReset(activeBullet, Ibullet.lifeSpan));
 
             //AutoShoot();
             yield return new WaitForSeconds(fireRate);
@@ -328,7 +328,7 @@ public class TurretBehaviour : MonoBehaviour
         StartCoroutine(PoolReset(activeBullet));
     }
 */
-    private IEnumerator PoolReset(GameObject currentBullet)
+    private IEnumerator PoolReset(GameObject currentBullet, float bulletLifeSpan)
     {
         yield return new WaitForSeconds(bulletLifeSpan);
         bulletPool.ReturnObject(currentBullet);

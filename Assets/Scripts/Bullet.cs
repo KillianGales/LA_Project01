@@ -1,5 +1,7 @@
 using UnityEngine;
 using UnityEditor;
+using System;
+using UnityEngine.UIElements;
 
 public class Bullet : MonoBehaviour
 {
@@ -10,14 +12,23 @@ public class Bullet : MonoBehaviour
     //public BulletType bullet;
     public bool isActive;
     public int damages;
+    private float instTime;
+    private Vector3 OGPosition;
+    private float angle;
+    public float lifeSpan;
 
     public void Initialize(Vector3 target, BulletType type)
     {
         myType = type;
         GetComponent<Renderer>().material = type.m_Material;
+        lifeSpan = type.m_lifeSpan;
         bulletSpeed = type.m_Speed;
         this.target = target;
         damages = type.m_damages;
+        instTime = Time.time;
+        OGPosition = transform.position;
+        angle = type.m_angle;
+
         /*
         bullet = BulletTypes[bulletIndex];
         GetComponent<Renderer>().material = bullet.m_Material;
@@ -39,7 +50,15 @@ public class Bullet : MonoBehaviour
                 transform.position += target * Time.deltaTime * bulletSpeed;
                 break;
             case EBehaviour.circleAround :
-                transform.position += target * Time.deltaTime * bulletSpeed;
+                float angle = (Time.time-instTime) * bulletSpeed;
+                float radius = this.angle * (Time.time-instTime);
+
+                transform.position = new Vector3(
+                Mathf.Cos(angle) * radius + OGPosition.x,
+                0,
+                Mathf.Sin(angle) * radius + OGPosition.z);
+                
+                //transform.position += new Vector3 (transform.position.x*Time.deltaTime, 0, target.z) * Time.deltaTime * bulletSpeed;
                 break;
             
         }

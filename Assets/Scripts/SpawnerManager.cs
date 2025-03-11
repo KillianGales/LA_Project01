@@ -29,6 +29,7 @@ public class SpawnerManager : MonoBehaviour
     public List<EnemyType> enType;    
     public const string HIGHEST_ROUND_KEY = "highestRound";
     public int currentHighest;
+    public Transform outOfBoundsEnemyPool;
 
     void Awake()
     {
@@ -41,24 +42,17 @@ public class SpawnerManager : MonoBehaviour
             Destroy(gameObject);
         }
 
-        Debug.Log("SpawnerManagerAwake");
-
-      //  if(spawners.Length <1)
-        //{
-            spawners = GetComponentsInChildren<LineRenderer>();
-        //}
-
+        spawners = GetComponentsInChildren<LineRenderer>();
 
         //Add it direct in editor
         enemyPool = gameObject.AddComponent<ObjectPool>();
-        enemyPool.InitializePool(enemy, 10);
+        enemyPool.InitializePool(enemy, 10, outOfBoundsEnemyPool);
 
         currentHighest = GetHighestRound();
 
     }
     void Start()
     {
-        Debug.Log("SpawnerManagerStart");
 
         foreach(var spawn in spawners)
         {
@@ -71,8 +65,6 @@ public class SpawnerManager : MonoBehaviour
                 spawnPoints.Add(pointArray[i]);
             }
         }
-
-        //cleanStats();
 
         round = GameManager.Instance.startingRound;
 
