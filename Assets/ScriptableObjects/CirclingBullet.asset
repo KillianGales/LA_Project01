@@ -12,12 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a214537f9cb060746b23d48505a82131, type: 3}
   m_Name: CirclingBullet
   m_EditorClassIdentifier: 
-  m_Speed: 2
-  m_Material: {fileID: 2100000, guid: f21a2b20594194c4ba0e5482f1210ec7, type: 2}
-  m_damages: 500
-  m_angle: 0.9
+  m_Speed: 2.25
+  m_Material: {fileID: 2100000, guid: 30922392fe6f9514c879772efe7f5f52, type: 2}
+  m_damages: 25
+  m_expensionRate: 0.8
   m_lifeSpan: 20
-  fireRate: 0.7
+  fireRate: 0.9
   behaviour: 1
   colorOverride:
     serializedVersion: 2

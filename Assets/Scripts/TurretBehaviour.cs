@@ -78,6 +78,7 @@ public class TurretBehaviour : MonoBehaviour
         if (activeMods.Count > 0)
         {
             Transform curMod;
+            Transform origin = null;
             if(isStart)
             {
                 curMod = Instantiate(curModData.gameObject).transform;
@@ -93,7 +94,16 @@ public class TurretBehaviour : MonoBehaviour
             curMod.rotation = sockets[index].transform.rotation;
             curMod.transform.SetParent(sockets[index].transform);
 
-            //ModProfile curModData = curMod.GetComponent<ModProfile>();
+            switch(curModData.origin)
+            {
+                case 0:
+                    origin = Launchpad;
+                    break;
+                case 1 :
+                    origin = curMod;
+                    break;
+
+            }
 
             SetModUI(index, curModData.bulletType);
 
@@ -103,15 +113,15 @@ public class TurretBehaviour : MonoBehaviour
             {
                 case 0 :
                     //StopCoroutine(shootRoutines[0]);
-                    shootRoutines[0] = StartCoroutine(EAutoShoot00(curModData));
+                    shootRoutines[0] = StartCoroutine(EAutoShoot00(curModData, origin));
                     break;
                 case 1 :
                     //StopCoroutine(shootRoutines[1]);
-                    shootRoutines[1] = StartCoroutine(EAutoShoot01(curModData));
+                    shootRoutines[1] = StartCoroutine(EAutoShoot01(curModData, origin));
                     break;
                 case 2 :
                     //StopCoroutine(shootRoutines[2]);
-                    shootRoutines[2] = StartCoroutine(EAutoShoot02(curModData));
+                    shootRoutines[2] = StartCoroutine(EAutoShoot02(curModData, origin));
                     break;
             }
 
@@ -248,7 +258,7 @@ public class TurretBehaviour : MonoBehaviour
 /// </summary>
 //</param>
 
-    private IEnumerator EAutoShoot00(ModProfile curModData)
+    private IEnumerator EAutoShoot00(ModProfile curModData, Transform origin)
     {
         GameObject activeBullet;
         Bullet Ibullet;
@@ -256,10 +266,10 @@ public class TurretBehaviour : MonoBehaviour
         {
             fireRate = curModData.bulletType.fireRate;
 
-            activeBullet = bulletPool.GetObjectFromPool(Launchpad.position);
+            activeBullet = bulletPool.GetObjectFromPool(origin.position);
             if(!activeBullet)break;
             Ibullet = activeBullet.GetComponent<Bullet>();
-            Ibullet.Initialize(Launchpad.forward, curModData.bulletType);
+            Ibullet.Initialize(origin, curModData.bulletType);
             StartCoroutine(PoolReset(activeBullet, Ibullet.lifeSpan));
 
             //AutoShoot();
@@ -267,7 +277,7 @@ public class TurretBehaviour : MonoBehaviour
         }  
     }
 
-    private IEnumerator EAutoShoot01(ModProfile curModData)
+    private IEnumerator EAutoShoot01(ModProfile curModData, Transform origin)
     {
         GameObject activeBullet;
         Bullet Ibullet;
@@ -275,10 +285,10 @@ public class TurretBehaviour : MonoBehaviour
         {
             fireRate = curModData.bulletType.fireRate;
 
-            activeBullet = bulletPool.GetObjectFromPool(Launchpad.position);
+            activeBullet = bulletPool.GetObjectFromPool(origin.position);
             if(!activeBullet)break;
             Ibullet = activeBullet.GetComponent<Bullet>();
-            Ibullet.Initialize(Launchpad.forward, curModData.bulletType);
+            Ibullet.Initialize(origin, curModData.bulletType);
             StartCoroutine(PoolReset(activeBullet, Ibullet.lifeSpan));
 
             //AutoShoot();
@@ -286,7 +296,7 @@ public class TurretBehaviour : MonoBehaviour
         }  
     }
 
-    private IEnumerator EAutoShoot02(ModProfile curModData)
+    private IEnumerator EAutoShoot02(ModProfile curModData,Transform origin)
     {
         GameObject activeBullet;
         Bullet Ibullet;
@@ -294,10 +304,10 @@ public class TurretBehaviour : MonoBehaviour
         {
             fireRate = curModData.bulletType.fireRate;
 
-            activeBullet = bulletPool.GetObjectFromPool(Launchpad.position);
+            activeBullet = bulletPool.GetObjectFromPool(origin.position);
             if(!activeBullet)break;
             Ibullet = activeBullet.GetComponent<Bullet>();
-            Ibullet.Initialize(Launchpad.forward, curModData.bulletType);
+            Ibullet.Initialize(origin, curModData.bulletType);
             StartCoroutine(PoolReset(activeBullet, Ibullet.lifeSpan));
 
             //AutoShoot();

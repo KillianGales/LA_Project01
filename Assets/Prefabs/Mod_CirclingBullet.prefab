@@ -104,6 +104,7 @@ MonoBehaviour:
   bulletType: {fileID: 11400000, guid: 831d76f451bcf15459cee8f135ea693f, type: 2}
   lifeSpan: 12
   dropped: 0
+  origin: 1
 --- !u!136 &144424561492510655
 CapsuleCollider:
   m_ObjectHideFlags: 0

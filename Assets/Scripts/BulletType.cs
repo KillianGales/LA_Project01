@@ -7,7 +7,7 @@ public class BulletType : ScriptableObject
     //[SerializeField] public GameObject m_Mesh;
     [SerializeField] public Material m_Material;
     [SerializeField] public int m_damages;
-    [SerializeField] public float m_angle;
+    [SerializeField] public float m_expensionRate;
     [SerializeField] public float m_lifeSpan;
     public float fireRate;
     [SerializeField] public EBehaviour behaviour;

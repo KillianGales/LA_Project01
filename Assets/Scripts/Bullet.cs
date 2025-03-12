@@ -2,68 +2,92 @@ using UnityEngine;
 using UnityEditor;
 using System;
 using UnityEngine.UIElements;
+using System.Collections;
 
 public class Bullet : MonoBehaviour
 {
     [SerializeField] private BulletType myType;
+    private EBehaviour myBehaviour;
     [SerializeField] private EmodTypes mod;
-    private Vector3 target;
+    private Vector3 targetF, targetR, targetU;
     private float bulletSpeed;
     //public BulletType bullet;
-    public bool isActive;
     public int damages;
     private float instTime;
     private Vector3 OGPosition;
-    private float angle;
+    private float expensionRate;
     public float lifeSpan;
+    public delegate void behaviourFunc();
+    private behaviourFunc activeBehaviour; 
 
-    public void Initialize(Vector3 target, BulletType type)
+    public void Initialize(Transform targetObject, BulletType type)
     {
+        //Universal init
         myType = type;
+        myBehaviour = myType.behaviour;
         GetComponent<Renderer>().material = type.m_Material;
-        lifeSpan = type.m_lifeSpan;
-        bulletSpeed = type.m_Speed;
-        this.target = target;
+        lifeSpan = myType.m_lifeSpan;
+        bulletSpeed = myType.m_Speed;
         damages = type.m_damages;
-        instTime = Time.time;
-        OGPosition = transform.position;
-        angle = type.m_angle;
 
-        /*
-        bullet = BulletTypes[bulletIndex];
-        GetComponent<Renderer>().material = bullet.m_Material;
-        m_bulletSpeed = bullet.m_Speed;
-        m_target = target;
-        damages = bullet.m_damages;*/
+        //Behaviour specific init
+        switch (myBehaviour)
+        {
+            case EBehaviour.shootStraight :
+
+                targetF = targetObject.forward;
+                activeBehaviour = BShootStraight;
+
+                break;
+
+            case EBehaviour.circleAround :
+
+                instTime = Time.time;
+                OGPosition = transform.position;
+                expensionRate = type.m_expensionRate;
+                targetF = targetObject.forward;
+                targetU = targetObject.up;
+                targetR = targetObject.right;
+
+                StartCoroutine(CircleAroundInit());
+                //activeBehaviour = BCircleAround;
+
+                break;
+        }
+
+
+
     }
 
     public void Update()
     {
-        Behaviour();
+        activeBehaviour?.Invoke();
     }
 
-    private void Behaviour()
+    private void BShootStraight()
     {
-        switch (myType.behaviour)
-        {
-            case EBehaviour.shootStraight :
-                transform.position += target * Time.deltaTime * bulletSpeed;
-                break;
-            case EBehaviour.circleAround :
-                float angle = (Time.time-instTime) * bulletSpeed;
-                float radius = this.angle * (Time.time-instTime);
-
-                transform.position = new Vector3(
-                Mathf.Cos(angle) * radius + OGPosition.x,
-                0,
-                Mathf.Sin(angle) * radius + OGPosition.z);
-                
-                //transform.position += new Vector3 (transform.position.x*Time.deltaTime, 0, target.z) * Time.deltaTime * bulletSpeed;
-                break;
-            
-        }
-
-
-        
+        transform.position += targetF * Time.deltaTime * bulletSpeed;
     }
+
+    private void BCircleAround()
+    {
+        float angle = (Time.time-instTime) * bulletSpeed;
+        float radius = expensionRate * (Time.time-instTime);
+
+        Vector3 offset = (Mathf.Cos(angle) * radius * targetR) + (Mathf.Sin(angle) * radius * targetU);
+        transform.position = OGPosition + offset;
+
+    }
+
+    private IEnumerator CircleAroundInit()
+    {
+        activeBehaviour = BShootStraight;
+
+        yield return new WaitForSeconds(1f);
+
+        instTime = Time.time;
+        OGPosition = transform.position;
+        activeBehaviour = BCircleAround;
+    }
+
 }

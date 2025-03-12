@@ -8,6 +8,8 @@ public class ModProfile : MonoBehaviour
     //public float fireRate;
     public float lifeSpan;
     public bool dropped;
+    [Range (0,1)]
+    public int origin;
 
     public void Update()
     {
