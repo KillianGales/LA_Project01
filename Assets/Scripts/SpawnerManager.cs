@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Collections;
 using TMPro;
-using System.Linq;
 
 public class SpawnerManager : MonoBehaviour
 {
@@ -23,13 +22,15 @@ public class SpawnerManager : MonoBehaviour
     public static SpawnerManager instance;
     private Enemy currEnemy;
     private EEnemytype enemyType;
-    private int miniBossToSpawn, TotalEnemiesToSpawn, TotalRoundEnemies;
+    private int miniBossToSpawn, TotalRoundEnemies;
+    public int TotalEnemiesToSpawn;
     public int baseMiniBossPerRound, firstMiniBossRound, typeToSpawn;
     public int miniBossSpawnIndex;
     public List<EnemyType> enType;    
     public const string HIGHEST_ROUND_KEY = "highestRound";
     public int currentHighest;
     public Transform outOfBoundsEnemyPool;
+    private HashSet<string> spawnedEnemyRem = new HashSet<string>();
 
     void Awake()
     {
@@ -133,6 +134,7 @@ public class SpawnerManager : MonoBehaviour
 
     public void EnemyDefeated()
     {
+        
         remainingEnemies--;
 
         if(remainingEnemies <= 0)
@@ -145,6 +147,8 @@ public class SpawnerManager : MonoBehaviour
     {
         round++;
         roundText.text = round.ToString();
+
+        spawnedEnemyRem.Clear();
 
         if(round%5 ==0)
         {

@@ -1939,6 +1939,14 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 13586137}
     - target: {fileID: 4855850677451121017, guid: b83fc3ec6279c404dbdb198fd65dc26f, type: 3}
+      propertyPath: maxSpawnInter
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4855850677451121017, guid: b83fc3ec6279c404dbdb198fd65dc26f, type: 3}
+      propertyPath: minSpawnInter
+      value: 0.8
+      objectReference: {fileID: 0}
+    - target: {fileID: 4855850677451121017, guid: b83fc3ec6279c404dbdb198fd65dc26f, type: 3}
       propertyPath: outOfBoundsEnemyPool
       value: 
       objectReference: {fileID: 858651079}
@@ -5608,7 +5616,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5092570534205834806, guid: 64916fef18391be4794509b34d57a317, type: 3}
       propertyPath: allMods.Array.size
-      value: 3
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 5092570534205834806, guid: 64916fef18391be4794509b34d57a317, type: 3}
       propertyPath: startingMods.Array.size
@@ -5619,12 +5627,36 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 7865843002178677165, guid: bc9a3d0538c7dc541b2b8e7408f50eae, type: 3}
     - target: {fileID: 5092570534205834806, guid: 64916fef18391be4794509b34d57a317, type: 3}
+      propertyPath: allMods.Array.data[3].mod
+      value: 
+      objectReference: {fileID: 7865843002178677165, guid: e24363a18078eed43970264e7556a717, type: 3}
+    - target: {fileID: 5092570534205834806, guid: 64916fef18391be4794509b34d57a317, type: 3}
       propertyPath: 'startingMods.Array.data[0]'
       value: 
-      objectReference: {fileID: 8638993190856279868, guid: bc9a3d0538c7dc541b2b8e7408f50eae, type: 3}
+      objectReference: {fileID: 8638993190856279868, guid: c19a23e1801bcb3499dc408b2abbe416, type: 3}
+    - target: {fileID: 5092570534205834806, guid: 64916fef18391be4794509b34d57a317, type: 3}
+      propertyPath: 'startingMods.Array.data[1]'
+      value: 
+      objectReference: {fileID: 8638993190856279868, guid: c19a23e1801bcb3499dc408b2abbe416, type: 3}
+    - target: {fileID: 5092570534205834806, guid: 64916fef18391be4794509b34d57a317, type: 3}
+      propertyPath: 'startingMods.Array.data[2]'
+      value: 
+      objectReference: {fileID: 8638993190856279868, guid: c19a23e1801bcb3499dc408b2abbe416, type: 3}
+    - target: {fileID: 5092570534205834806, guid: 64916fef18391be4794509b34d57a317, type: 3}
+      propertyPath: allMods.Array.data[0].dropRate
+      value: 0.03
+      objectReference: {fileID: 0}
+    - target: {fileID: 5092570534205834806, guid: 64916fef18391be4794509b34d57a317, type: 3}
+      propertyPath: allMods.Array.data[1].dropRate
+      value: 0.01
+      objectReference: {fileID: 0}
     - target: {fileID: 5092570534205834806, guid: 64916fef18391be4794509b34d57a317, type: 3}
       propertyPath: allMods.Array.data[2].dropRate
-      value: 0.005
+      value: 0.01
+      objectReference: {fileID: 0}
+    - target: {fileID: 5092570534205834806, guid: 64916fef18391be4794509b34d57a317, type: 3}
+      propertyPath: allMods.Array.data[3].dropRate
+      value: 0.01
       objectReference: {fileID: 0}
     - target: {fileID: 6851914164181731449, guid: 64916fef18391be4794509b34d57a317, type: 3}
       propertyPath: m_LocalPosition.x
@@ -5785,7 +5817,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6649756849530515442, guid: 9023bbc7a7768d6459ea752f4bc20fe3, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 5.9
+      value: -2.92
       objectReference: {fileID: 0}
     - target: {fileID: 6649756849530515442, guid: 9023bbc7a7768d6459ea752f4bc20fe3, type: 3}
       propertyPath: m_LocalRotation.w

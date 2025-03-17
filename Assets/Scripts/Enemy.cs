@@ -30,6 +30,8 @@ public class Enemy : MonoBehaviour
     public ObjectPool pool;
     //public GameObject lifeUI;
     public EnemyType myType;
+    private HashSet<Bullet> processedBullets = new HashSet<Bullet>();
+    private bool hasDied;
 
     void Start()
     {
@@ -48,9 +50,9 @@ public class Enemy : MonoBehaviour
             baselife = myType.s_life;
         }
 
-
+        hasDied = false;
         Vector3 directionToOrigin = Vector3.zero - transform.position;
-        life = baselife;
+        life = Mathf.Clamp(baselife, 0, baselife);
         healthBar.maxValue = life;
         healthBar.value = healthBar.maxValue;
         lifeText.SetText(life.ToString());
@@ -63,16 +65,18 @@ public class Enemy : MonoBehaviour
         move = true;
     }
 
-    /*  void OnDrawGizmosSelected()
+    /* void OnDrawGizmosSelected()
        {
-           Vector3 point1 = transform.position + Vector3.up * (capsuleHeight / 2);
+
+        Gizmos.DrawSphere(transform.position, 7);
+        /*   Vector3 point1 = transform.position + Vector3.up * (capsuleHeight / 2);
            Vector3 point2 = transform.position - Vector3.up * (capsuleHeight / 2);
            CapsuleCollider coll = transform.GetComponent<CapsuleCollider>();
            coll.radius = capsuleRadius;
            coll.height = capsuleHeight;
            Gizmos.DrawSphere(transform.position, capsuleRadius);
-       }*/
-
+       }
+*/
     // Update is called once per frame
     void Update()
     {
@@ -101,14 +105,43 @@ public class Enemy : MonoBehaviour
         foreach (Collider hit in hitObjects)
         {
             
-            if (!hit.GetComponent<Bullet>()) return;
+            //if (!hit.GetComponent<Bullet>()) return;
             Bullet bullet = hit.GetComponent<Bullet>();
 
+            if (bullet == null || processedBullets.Contains(bullet)) 
+                continue;
+            
+            processedBullets.Add(bullet);
 
-            if(life > 0)
+            switch(bullet.myBehaviour)
+            {
+                case EBehaviour.shootStraight:
+                    bullet.gameObject.SetActive(false);
+                    EvaluateDamage(bullet);
+                    break;
+                case EBehaviour.circleAround:
+                    bullet.gameObject.SetActive(false);
+                    EvaluateDamage(bullet);
+                    break;
+                case EBehaviour.Disperse:
+                    bullet.getNextTarget(this);
+                    EvaluateDamage(bullet);
+                    break;
+            } 
+
+            
+        }
+    }
+
+    void EvaluateDamage(Bullet bullet)
+    {
+        if (hasDied) return;
+        if(life > 0)
             {
                 TakeDamage(bullet);
                 lifeText.SetText(life.ToString());
+                StartCoroutine(StopInTrack(bullet.stunTime));
+                return;
             }
 
             if(life <= 0)
@@ -116,23 +149,23 @@ public class Enemy : MonoBehaviour
                 Die();
                 return;
             }
-        }
     }
 
     private void TakeDamage(Bullet bullet)
     {
 
         life -= bullet.damages;
-        bullet.gameObject.SetActive(false);
-        healthBar.value = life;//Mathf.Lerp(healthBar.value, life, lifeAnimSpeed*Time.deltaTime);
+        healthBar.value = life;
         return;
 
     }
     private void Die()
     {
+        hasDied = true;
         SpawnerManager.instance.EnemyDefeated();
         GameManager.Instance.CheckForDrop(transform);
         pool.ReturnObject(gameObject);
+        return;
     }
 
     private IEnumerator InflictDamage()
@@ -190,8 +223,14 @@ public class Enemy : MonoBehaviour
 
             return;
         }
-
-
-
     }
+
+    IEnumerator StopInTrack(float stunTime)
+    {
+        move = false;
+        yield return new WaitForSeconds(stunTime);
+        move = true;
+    }
+
+
 }

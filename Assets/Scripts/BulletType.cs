@@ -14,6 +14,10 @@ public class BulletType : ScriptableObject
     [Header("UI Setup")]
     [SerializeField] public Color32 colorOverride;
     public Sprite imageVisual;
+    public LayerMask enemyLayer;
+    public float propagationRadius;
+    public int maxTargets;
+    public float stunTime;
 
 
 }
