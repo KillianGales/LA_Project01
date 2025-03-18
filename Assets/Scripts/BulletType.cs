@@ -19,5 +19,15 @@ public class BulletType : ScriptableObject
     public int maxTargets;
     public float stunTime;
 
+    [Header("SFX Setup")]
+    public AudioSource startAudio;
+    public AudioSource activeAudio, endAudio;
+    [Header("Particle System Setup")]
+    public ParticleSystem startParticleSystem;
+    public ParticleSystem activeParticleSystem, endParticleSystem;
+    [Header("Trails Setup")]
+    public TrailRenderer startTrail;
+    public TrailRenderer activeTrail, endTrail;
+
 
 }

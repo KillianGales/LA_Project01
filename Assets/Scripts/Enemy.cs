@@ -1,6 +1,5 @@
 using UnityEngine;
 using System.Collections;
-using System.Net.WebSockets;
 using System.Collections.Generic;
 using UnityEngine.UI;
 using TMPro;
@@ -127,8 +126,7 @@ public class Enemy : MonoBehaviour
                     bullet.getNextTarget(this);
                     EvaluateDamage(bullet);
                     break;
-            } 
-
+            }
             
         }
     }
@@ -136,19 +134,31 @@ public class Enemy : MonoBehaviour
     void EvaluateDamage(Bullet bullet)
     {
         if (hasDied) return;
+        //Debug.Break();
+        ParticleSystem ps = bullet.myType.endParticleSystem;
+        if(ps !=null)
+            FXPoolManager.Instance.PlayParticle(bullet.myType.name, ps.name, transform.position);
+
         if(life > 0)
-            {
-                TakeDamage(bullet);
-                lifeText.SetText(life.ToString());
-                StartCoroutine(StopInTrack(bullet.stunTime));
-                return;
-            }
+        {
+            TakeDamage(bullet);
+            lifeText.SetText(life.ToString());
+
+            StartCoroutine(StopInTrack(bullet.stunTime));
 
             if(life <= 0)
             {
                 Die();
-                return;
             }
+                
+            return;
+        }
+/*
+            if(life <= 0)
+            {
+                Die();
+                return;
+            }*/
     }
 
     private void TakeDamage(Bullet bullet)

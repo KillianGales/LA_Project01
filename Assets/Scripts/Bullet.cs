@@ -7,7 +7,7 @@ using System.Collections.Generic;
 
 public class Bullet : MonoBehaviour
 {
-    [SerializeField] private BulletType myType;
+    [SerializeField] public BulletType myType;
     public EBehaviour myBehaviour;
     [SerializeField] private EmodTypes mod;
     private Vector3 targetF, targetR, targetU, targetDir;

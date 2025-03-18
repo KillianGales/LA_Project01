@@ -4822,6 +4822,55 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1915243760
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1915243763}
+  - component: {fileID: 1915243762}
+  m_Layer: 0
+  m_Name: FXPoolManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1915243762
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1915243760}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 78349976eb2e9d44dbaf604dc8504883, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  AllBullet:
+  - {fileID: 11400000, guid: 58b707bd7cb35b644a04f2507e23b36c, type: 2}
+  - {fileID: 11400000, guid: 831d76f451bcf15459cee8f135ea693f, type: 2}
+  - {fileID: 11400000, guid: 2b8dd00f79b9b3b4eb9fdec7858f7524, type: 2}
+  - {fileID: 11400000, guid: 387e680a21d880c4285c88dcd3c0a4b8, type: 2}
+--- !u!4 &1915243763
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1915243760}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1929420217
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5633,7 +5682,7 @@ PrefabInstance:
     - target: {fileID: 5092570534205834806, guid: 64916fef18391be4794509b34d57a317, type: 3}
       propertyPath: 'startingMods.Array.data[0]'
       value: 
-      objectReference: {fileID: 8638993190856279868, guid: c19a23e1801bcb3499dc408b2abbe416, type: 3}
+      objectReference: {fileID: 8638993190856279868, guid: e24363a18078eed43970264e7556a717, type: 3}
     - target: {fileID: 5092570534205834806, guid: 64916fef18391be4794509b34d57a317, type: 3}
       propertyPath: 'startingMods.Array.data[1]'
       value: 
@@ -6018,3 +6067,4 @@ SceneRoots:
   - {fileID: 1007703189}
   - {fileID: 223748685}
   - {fileID: 813344319}
+  - {fileID: 1915243763}

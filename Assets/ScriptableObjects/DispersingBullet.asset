@@ -17,7 +17,7 @@ MonoBehaviour:
   m_damages: 25
   m_expensionRate: 0.8
   m_lifeSpan: 20
-  fireRate: 1.5
+  fireRate: 1
   behaviour: 2
   colorOverride:
     serializedVersion: 2
@@ -29,3 +29,12 @@ MonoBehaviour:
   propagationRadius: 10
   maxTargets: 4
   stunTime: 0.8
+  startAudio: {fileID: 0}
+  activeAudio: {fileID: 0}
+  endAudio: {fileID: 0}
+  startParticleSystem: {fileID: 0}
+  activeParticleSystem: {fileID: 0}
+  endParticleSystem: {fileID: 0}
+  startTrail: {fileID: 0}
+  activeTrail: {fileID: 0}
+  endTrail: {fileID: 0}
