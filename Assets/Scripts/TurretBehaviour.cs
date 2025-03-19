@@ -33,12 +33,22 @@ public class TurretBehaviour : MonoBehaviour
     [SerializeField] private GameObject currentModCanvas, NewModCanvas, pauseButton;
     [SerializeField] private Image newModImage;
 
+    [Header("Laser Setup")]
+    public GameObject laserObj;
+    private LineRenderer laserLine;
+    public float maxLength = 20f;
+    public float growSpeed = 40f;
+    public LayerMask hitLayers;
+    private float currentLength = 0f;
+    //private bool isFiring = false;
+
 
     void Awake()
     {
         Canon = transform.Find("Canon");
         Launchpad = Canon.transform.Find("LaunchPad");
         turretBase = transform.Find("Base");
+        laserLine = laserObj.GetComponent<LineRenderer>();
 
         for (int i = 0; i < turretBase.childCount; i++)
         {
@@ -126,55 +136,8 @@ public class TurretBehaviour : MonoBehaviour
             }
 
             newMod = null;
-            /*for(int i = 0 ; i < shootRoutines.Count; i++)
-            {
-                Debug.Log(i + "th routine is " + shootRoutines[i]);
-            }*/
-            /*Coroutine newCoroutine =*/
-            /*Dictionary sys for coroutines activeModRoutine[curModData] = newCoroutine;*/
-/*
-            switch (curModData.type)
-            {
-                case EmodTypes.CanonBall:
-
-                    /*activeModRoutine[index] = Coroutine newCoroutine =  StartCoroutine(EAutoShoot(curModData));
-                    Debug.Log(name + "is set to fire CanonBall");
-                    break;
-
-                case EmodTypes.FastBullet:
-
-                    /*activeModRoutine[index] = Coroutine newCoroutine =StartCoroutine(EAutoShoot(curModData));
-                    Debug.Log(name + "is set to fire FastBullet");
-                    break;
-            }
-*/
         }
     }
-/*Dictionary sys for coroutines
-    void StopSpecificBullet(ModProfile modType)
-    {
-        if (activeModRoutine.ContainsKey(modType))
-        {
-            StopCoroutine(activeModRoutine[modType]);
-            activeModRoutine.Remove(modType);
-        }
-    }*/
-    /*
-    void ToggleBulletType(ModProfile modType)
-    {
-        if (activeMods.Contains(modType))
-        {
-            activeModRoutine.Remove(modType);
-            StopSpecificBullet(modType);
-            Debug.Log($"Stopped firing {modType}");
-        }
-        else
-        {
-            activeMods.Add(modType);
-            Debug.Log($"Started firing {modType}");
-        }
-
-    }*/
     
 
     void Update()
@@ -235,13 +198,6 @@ public class TurretBehaviour : MonoBehaviour
         }
     }
 
-    private IEnumerator EmptyRoutine()
-    {
-        yield break;
-    }
-
-
-
     private void CanonLookat()
     {
         WorldMousePos = InputManager.GetWorldMousePosition();
@@ -262,18 +218,36 @@ public class TurretBehaviour : MonoBehaviour
     {
         GameObject activeBullet;
         Bullet Ibullet;
-        while(true)
-        {
-            fireRate = curModData.bulletType.fireRate;
 
-            activeBullet = bulletPool.GetObjectFromPool(origin.position);
-            if(!activeBullet)break;
-            Ibullet = activeBullet.GetComponent<Bullet>();
-            Ibullet.Initialize(origin, curModData.bulletType);
-            StartCoroutine(PoolReset(activeBullet, Ibullet.lifeSpan));
+        if(curModData.bulletType.behaviour == EBehaviour.Laser)
+        {
+            laserLine.enabled = true;
+            currentLength = 0f;
+
+            while (true)
+            {
+                if(currentLength < maxLength)
+                    currentLength += growSpeed * Time.deltaTime;
+                Ibullet = laserObj.GetComponent<Bullet>();
+                UpdateLaser(Ibullet);
+                yield return null;
+            }
+        }
+        else
+        {
+            while(true)
+            {
+                fireRate = curModData.bulletType.fireRate;
+
+                activeBullet = bulletPool.GetObjectFromPool(origin.position);
+                if(!activeBullet)break;
+                Ibullet = activeBullet.GetComponent<Bullet>();
+                Ibullet.Initialize(origin, curModData.bulletType);
+                StartCoroutine(PoolReset(activeBullet, Ibullet.lifeSpan));
 
             //AutoShoot();
-            yield return new WaitForSeconds(fireRate);
+                yield return new WaitForSeconds(fireRate);
+            }
         }  
     }
 
@@ -281,21 +255,78 @@ public class TurretBehaviour : MonoBehaviour
     {
         GameObject activeBullet;
         Bullet Ibullet;
-        while(true)
-        {
-            fireRate = curModData.bulletType.fireRate;
 
-            activeBullet = bulletPool.GetObjectFromPool(origin.position);
-            if(!activeBullet)break;
-            Ibullet = activeBullet.GetComponent<Bullet>();
-            Ibullet.Initialize(origin, curModData.bulletType);
-            StartCoroutine(PoolReset(activeBullet, Ibullet.lifeSpan));
+        if(curModData.bulletType.behaviour == EBehaviour.Laser)
+        {
+            laserLine.enabled = true;
+            currentLength = 0f;
+
+            while (true)
+            {
+                if(currentLength < maxLength)
+                    currentLength += growSpeed * Time.deltaTime;
+                Ibullet = laserObj.GetComponent<Bullet>();
+                UpdateLaser(Ibullet);
+                yield return null;
+            }
+        }
+        else
+        {
+            while(true)
+            {
+                fireRate = curModData.bulletType.fireRate;
+
+                activeBullet = bulletPool.GetObjectFromPool(origin.position);
+                if(!activeBullet)break;
+                Ibullet = activeBullet.GetComponent<Bullet>();
+                Ibullet.Initialize(origin, curModData.bulletType);
+                StartCoroutine(PoolReset(activeBullet, Ibullet.lifeSpan));
 
             //AutoShoot();
-            yield return new WaitForSeconds(fireRate);
+                yield return new WaitForSeconds(fireRate);
+            }
         }  
     }
 
+    private IEnumerator EAutoShoot02(ModProfile curModData,Transform origin)
+    {
+        GameObject activeBullet;
+        Bullet Ibullet;
+
+        if(curModData.bulletType.behaviour == EBehaviour.Laser)
+        {
+            laserLine.enabled = true;
+            currentLength = 0f;
+
+            while (true)
+            {
+                if(currentLength < maxLength)
+                    currentLength += growSpeed * Time.deltaTime;
+                Ibullet = laserObj.GetComponent<Bullet>();
+                UpdateLaser(Ibullet);
+                yield return null;
+            }
+        }
+        else
+        {
+            while(true)
+            {
+                fireRate = curModData.bulletType.fireRate;
+
+                activeBullet = bulletPool.GetObjectFromPool(origin.position);
+                if(!activeBullet)break;
+                Ibullet = activeBullet.GetComponent<Bullet>();
+                Ibullet.Initialize(origin, curModData.bulletType);
+                StartCoroutine(PoolReset(activeBullet, Ibullet.lifeSpan));
+
+            //AutoShoot();
+                yield return new WaitForSeconds(fireRate);
+            }
+        }  
+    }
+
+
+    /*
     private IEnumerator EAutoShoot02(ModProfile curModData,Transform origin)
     {
         GameObject activeBullet;
@@ -313,63 +344,48 @@ public class TurretBehaviour : MonoBehaviour
             //AutoShoot();
             yield return new WaitForSeconds(fireRate);
         }  
-    }
+    }*/
 
 /// <summary>
 /// //End of Coroutines section//////
 /// </summary>
 //</param>
 
+    void UpdateLaser(Bullet Ibullet)
+    {
+        RaycastHit hit;
+        Vector3 startPos = Launchpad.position;
+        Vector3 endPos = Launchpad.position + Launchpad.forward * currentLength;
+
+        if (Physics.Raycast(startPos, Launchpad.forward, out hit, currentLength, hitLayers))
+        {
+            endPos = hit.point;
+            Enemy enemyHit = hit.transform.GetComponent<Enemy>();
+            enemyHit.EvaluateDamage(Ibullet);
+        }
+
+        laserLine.SetPosition(0, startPos);
+        laserLine.SetPosition(1, endPos);
+    }
+
     void AutoRotate(float speed)
     {
         Canon.rotation = Quaternion.Slerp(Canon.rotation,Quaternion.LookRotation(Launchpad.right), speed* Time.deltaTime);
     }
-/*
-    private void AutoShoot(int bulletType, ModProfile curModData)
-    {
-        currentBulletType = bulletType;
-        fireRate = curModData.fireRate;
-        
 
-        activeBullet = bulletPool.GetObjectFromPool(Launchpad.position);
-        if(!activeBullet)return;
-        Bullet bullet = activeBullet.GetComponent<Bullet>();
-        bullet.Initialize(currentBulletType, Launchpad.forward);
-        StartCoroutine(PoolReset(activeBullet));
-    }
-*/
     private IEnumerator PoolReset(GameObject currentBullet, float bulletLifeSpan)
     {
         yield return new WaitForSeconds(bulletLifeSpan);
         bulletPool.ReturnObject(currentBullet);
     }
 
- /*   void TurnAct()
-    {
-        AutoShoot();
-    }
-*/
     void ModPickup(ModProfile mod)
     {
         mod.gameObject.layer = 0;
         activeMods.Add(mod);
 
-        //int index = activeMods.Count;
-
-        /* Other non working logic to check an empty socket - Fix by putting an empty gameobject in empty sockets
-        for(int i = 0; i < 2; i++)
-        {
-            if(activeMods[i] == null)
-            {
-                index = i;
-            }
-
-        }*/
-
-        //
         InitBulletType(mod, false, activeMods.Count-1);
         Debug.Log("Starting the " + (activeMods.Count-1) + "th coroutine");
-        //InitBulletType(activeMods.Count-1, false);
         
     }
     public void OpenPauseMenu()

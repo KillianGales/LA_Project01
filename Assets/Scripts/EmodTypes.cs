@@ -6,4 +6,5 @@ public enum EmodTypes
     FastBullet,
     circlingBullet,
     PropagationBullet,
+    laserBullet,
 }

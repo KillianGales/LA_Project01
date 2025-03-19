@@ -1,0 +1,40 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a214537f9cb060746b23d48505a82131, type: 3}
+  m_Name: LaserBullet
+  m_EditorClassIdentifier: 
+  m_Speed: 6
+  m_Material: {fileID: 2100000, guid: 51a32a776e691334b94d492f081e427e, type: 2}
+  m_damages: 1
+  m_expensionRate: 0
+  m_lifeSpan: 10
+  fireRate: 0.05
+  behaviour: 3
+  colorOverride:
+    serializedVersion: 2
+    rgba: 4284572096
+  imageVisual: {fileID: 7482667652216324306, guid: 0aa00eda078ca6c40b3e3a0b56400a30, type: 3}
+  enemyLayer:
+    serializedVersion: 2
+    m_Bits: 128
+  propagationRadius: 0
+  maxTargets: 0
+  stunTime: 0
+  startAudio: {fileID: 0}
+  activeAudio: {fileID: 0}
+  endAudio: {fileID: 0}
+  startParticleSystem: {fileID: 0}
+  activeParticleSystem: {fileID: 0}
+  endParticleSystem: {fileID: 7862300127514338041, guid: e39db63b8eb56b44f8c2fe2a437db758, type: 3}
+  startTrail: {fileID: 0}
+  activeTrail: {fileID: 8036478926699084945, guid: 3d5f60aac4d4e4c49b1f7819eb6cfe74, type: 3}
+  endTrail: {fileID: 0}

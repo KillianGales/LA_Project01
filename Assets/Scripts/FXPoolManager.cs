@@ -67,7 +67,7 @@ public class FXPoolManager : MonoBehaviour
     {
         if (!fxPools.ContainsKey(bulletType) || !fxPools[bulletType].ContainsKey(fxType))
         {
-            Debug.LogWarning($"FX type '{fxType}' for bullet '{bulletType}' not found in pool!");
+            //Debug.LogWarning($"FX type '{fxType}' for bullet '{bulletType}' not found in pool!");
             return null;
         }
 

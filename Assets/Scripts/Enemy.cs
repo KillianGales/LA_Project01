@@ -131,7 +131,7 @@ public class Enemy : MonoBehaviour
         }
     }
 
-    void EvaluateDamage(Bullet bullet)
+    public void EvaluateDamage(Bullet bullet)
     {
         if (hasDied) return;
         //Debug.Break();
@@ -153,12 +153,6 @@ public class Enemy : MonoBehaviour
                 
             return;
         }
-/*
-            if(life <= 0)
-            {
-                Die();
-                return;
-            }*/
     }
 
     private void TakeDamage(Bullet bullet)

@@ -73,7 +73,15 @@ public class Bullet : MonoBehaviour
                 targetDir = targetObject.forward;
                 activeBehaviour = BShootStraight;
 
-            break;
+                break;
+
+            case EBehaviour.Laser :
+
+                targetDir = targetObject.forward;
+                activeBehaviour = BShootStraight;
+
+                break;
+
         }
 
 
