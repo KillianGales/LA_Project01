@@ -8,7 +8,7 @@ public class Enemy : MonoBehaviour
 {
     public Transform closestTarget;
     public float movementSpeed;
-    [SerializeField] private int life, baselife; 
+    [SerializeField] private float life, baselife; 
     public float capsuleHeight = 2.0f;  // Height of the capsule
     public float capsuleRadius = 1.0f;  // Radius of the capsule
     public float colliderSize;
@@ -30,7 +30,7 @@ public class Enemy : MonoBehaviour
     //public GameObject lifeUI;
     public EnemyType myType;
     private HashSet<Bullet> processedBullets = new HashSet<Bullet>();
-    private bool hasDied;
+    public bool hasDied;
 
     void Start()
     {
@@ -142,9 +142,11 @@ public class Enemy : MonoBehaviour
         if(life > 0)
         {
             TakeDamage(bullet);
-            lifeText.SetText(life.ToString());
-
-            StartCoroutine(StopInTrack(bullet.stunTime));
+            lifeText.SetText(Mathf.RoundToInt(life+0.5f).ToString());
+            
+            float timeStun = bullet.stunTime;
+            if(timeStun>0)
+                StartCoroutine(StopInTrack(timeStun));
 
             if(life <= 0)
             {
@@ -157,7 +159,6 @@ public class Enemy : MonoBehaviour
 
     private void TakeDamage(Bullet bullet)
     {
-
         life -= bullet.damages;
         healthBar.value = life;
         return;
@@ -166,6 +167,7 @@ public class Enemy : MonoBehaviour
     private void Die()
     {
         hasDied = true;
+        SpawnerManager.instance.spawnedEnemyRef.Remove(transform);
         SpawnerManager.instance.EnemyDefeated();
         GameManager.Instance.CheckForDrop(transform);
         pool.ReturnObject(gameObject);
@@ -178,6 +180,7 @@ public class Enemy : MonoBehaviour
         {
             turretBe.life -= hitStrength;
             yield return new WaitForSeconds(hitRate);
+            GoToTarget();
         }
 
     }
@@ -210,6 +213,7 @@ public class Enemy : MonoBehaviour
     void GoToTarget()
     {
         if(closestTarget ==null) return;
+        move = true;
         Vector3 direction = closestTarget.position - transform.position;
         direction.y = 0;
 
@@ -218,7 +222,10 @@ public class Enemy : MonoBehaviour
 
         if(atkRange*atkRange <= direction.sqrMagnitude)
         {
-            transform.position += transform.forward*Time.deltaTime*movementSpeed;
+            Vector3 moveDirection = transform.forward*Time.deltaTime*movementSpeed;
+            moveDirection.y = 0;
+            transform.position += moveDirection;
+            
         }
         else
         {

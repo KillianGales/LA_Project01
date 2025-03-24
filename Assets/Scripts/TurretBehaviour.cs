@@ -41,7 +41,9 @@ public class TurretBehaviour : MonoBehaviour
     public LayerMask hitLayers;
     private float currentLength = 0f;
     //private bool isFiring = false;
-
+    public float moveSpeed;
+    public Rigidbody rb;
+    private List<Transform> enemies;
 
     void Awake()
     {
@@ -143,7 +145,10 @@ public class TurretBehaviour : MonoBehaviour
     void Update()
     {
         //AutoShoot();
+        //GetClosestEnemy();
         CanonLookat();
+        MoveAround();
+        //AutoRotate(2.5f);
 
         if(life>0)
         {
@@ -198,15 +203,61 @@ public class TurretBehaviour : MonoBehaviour
         }
     }
 
+    Transform GetClosestEnemy()
+    {
+        enemies = SpawnerManager.instance.spawnedEnemyRef;
+
+        if(enemies.Count <= 0) return null;
+
+        //Transform bestTarget = null;
+        float closestDistanceSqr = Mathf.Infinity;
+        Vector3 currentPosition = transform.position;
+
+        foreach (Transform enemy in enemies)
+        {
+            if (enemy == null) continue; // Ignore destroyed enemies
+            float sqrDistance = (enemy.position - currentPosition).sqrMagnitude;
+            if (sqrDistance < closestDistanceSqr)
+            {
+                closestDistanceSqr = sqrDistance;
+                closestEnemy = enemy;
+            }
+        }
+
+        return closestEnemy;
+    }
+
     private void CanonLookat()
+    {
+        GetClosestEnemy();
+
+        if(enemies.Count == 0) return;
+        
+
+        Vector3 orientation = closestEnemy.position-transform.position;
+
+        targetRotation = Quaternion.LookRotation(new Vector3(orientation.x, 0, orientation.z)/*.normalized*/);
+        Canon.rotation = Quaternion.Slerp(Canon.rotation, targetRotation, rotationSpeed * Time.deltaTime);
+    }
+
+    private void MoveAround()
     {
         WorldMousePos = InputManager.GetWorldMousePosition();
 
-        direction = WorldMousePos - Canon.position;
+        direction = WorldMousePos - transform.position;
         direction.y = 0;
 
-        targetRotation = Quaternion.LookRotation(direction);
-        Canon.rotation = Quaternion.Slerp(Canon.rotation, targetRotation, rotationSpeed * Time.deltaTime);
+        if(enemies.Count == 0) 
+        {
+            targetRotation = Quaternion.LookRotation(direction);
+            Canon.rotation = Quaternion.Slerp(Canon.rotation, targetRotation, rotationSpeed * Time.deltaTime);
+        }
+        //Logic to direct fire towards mousePos
+        //targetRotation = Quaternion.LookRotation(-direction);
+        //Canon.rotation = Quaternion.Slerp(Canon.rotation, targetRotation, rotationSpeed * Time.deltaTime);
+
+        direction = direction.normalized;
+        rb.linearVelocity = direction * moveSpeed;
     }
 
 /// <summary>
@@ -350,7 +401,7 @@ public class TurretBehaviour : MonoBehaviour
 /// //End of Coroutines section//////
 /// </summary>
 //</param>
-
+private float lastDamageTime = 0f;
     void UpdateLaser(Bullet Ibullet)
     {
         RaycastHit hit;
@@ -361,16 +412,22 @@ public class TurretBehaviour : MonoBehaviour
         {
             endPos = hit.point;
             Enemy enemyHit = hit.transform.GetComponent<Enemy>();
-            enemyHit.EvaluateDamage(Ibullet);
+            
+            if (enemyHit != null && Time.time - lastDamageTime >= Ibullet.myType.fireRate)
+            {
+                lastDamageTime = Time.time; // Update the timer
+                enemyHit.EvaluateDamage(Ibullet);
+            }
         }
 
         laserLine.SetPosition(0, startPos);
         laserLine.SetPosition(1, endPos);
     }
+    
 
     void AutoRotate(float speed)
     {
-        Canon.rotation = Quaternion.Slerp(Canon.rotation,Quaternion.LookRotation(Launchpad.right), speed* Time.deltaTime);
+        Canon.rotation = Quaternion.Slerp(Canon.rotation,Quaternion.LookRotation(Launchpad.up), speed* Time.deltaTime);
     }
 
     private IEnumerator PoolReset(GameObject currentBullet, float bulletLifeSpan)

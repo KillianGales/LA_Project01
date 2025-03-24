@@ -13,7 +13,7 @@ public class Bullet : MonoBehaviour
     private Vector3 targetF, targetR, targetU, targetDir;
     private float bulletSpeed;
     //public BulletType bullet;
-    public int damages;
+    public float damages;
     private float instTime;
     private Vector3 OGPosition;
     private float expensionRate;

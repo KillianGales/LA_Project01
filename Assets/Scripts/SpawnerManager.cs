@@ -7,8 +7,8 @@ public class SpawnerManager : MonoBehaviour
 {
     private ObjectPool enemyPool;
     [SerializeField] private float minSpawnInter, maxSpawnInter;
-    [SerializeField] private LineRenderer[] spawners;
-    [SerializeField] List<Vector3> spawnPoints;
+    [SerializeField] private Transform[] spawners;
+   // [SerializeField] List<Vector3> spawnPoints;
     [SerializeField] private GameObject enemy;
     public AnimationCurve spawnCurve;
     public float spawnIncr, maxSpawnRate, enemyCountIncr;
@@ -31,6 +31,7 @@ public class SpawnerManager : MonoBehaviour
     public int currentHighest;
     public Transform outOfBoundsEnemyPool;
     private HashSet<string> spawnedEnemyRem = new HashSet<string>();
+    public List<Transform> spawnedEnemyRef; 
 
     void Awake()
     {
@@ -43,7 +44,7 @@ public class SpawnerManager : MonoBehaviour
             Destroy(gameObject);
         }
 
-        spawners = GetComponentsInChildren<LineRenderer>();
+        //spawners = GetComponentsInChildren<LineRenderer>();
 
         //Add it direct in editor
         enemyPool = gameObject.AddComponent<ObjectPool>();
@@ -54,8 +55,8 @@ public class SpawnerManager : MonoBehaviour
     }
     void Start()
     {
-
-        foreach(var spawn in spawners)
+        //Spawn Init logic for line renderer based spawners
+        /*foreach(var spawn in spawners)
         {
             Vector3[] pointArray = new Vector3[spawn.positionCount];
 
@@ -65,7 +66,14 @@ public class SpawnerManager : MonoBehaviour
             { 
                 spawnPoints.Add(pointArray[i]);
             }
-        }
+        }*/
+/*
+        foreach(var spawn in spawners)
+        {
+            //Vector3[] pointArray = new Vector3[spawn.positionCount];
+
+            spawnPoints.Add(spawn.transform.position);
+        }*/
 
         round = GameManager.Instance.startingRound;
 
@@ -104,7 +112,8 @@ public class SpawnerManager : MonoBehaviour
     private void SpawnEnemy()
     {
 
-        int index = Random.Range(0, spawnPoints.Count);
+        int index = Random.Range(0, spawners.Length);
+        //Debug.Log(index);
 
         if(miniBossSpawnIndex == -1 && remainingMiniBoss > 0)
         {
@@ -112,7 +121,8 @@ public class SpawnerManager : MonoBehaviour
         }
 
         //optim plus tard --> manage le pool depuis ici et ne pas get chaque enemy
-        GameObject newEnemy = enemyPool.GetObjectFromPool(spawnPoints[index]);
+        GameObject newEnemy = enemyPool.GetObjectFromPool(spawners[index].position);
+        spawnedEnemyRef.Add(newEnemy.transform);
         currEnemy  = newEnemy.GetComponent<Enemy>();
         currEnemy.pool = enemyPool;
 

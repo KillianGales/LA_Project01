@@ -12,12 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a214537f9cb060746b23d48505a82131, type: 3}
   m_Name: LaserBullet
   m_EditorClassIdentifier: 
-  m_Speed: 6
+  m_Speed: 4.5
   m_Material: {fileID: 2100000, guid: 51a32a776e691334b94d492f081e427e, type: 2}
   m_damages: 1
   m_expensionRate: 0
   m_lifeSpan: 10
-  fireRate: 0.05
+  fireRate: 0.01
   behaviour: 3
   colorOverride:
     serializedVersion: 2

@@ -23,3 +23,18 @@ MonoBehaviour:
     serializedVersion: 2
     rgba: 4291085619
   imageVisual: {fileID: -2413806693520163455, guid: 01f4df35280284c4aaed1f6749cde5c0, type: 3}
+  enemyLayer:
+    serializedVersion: 2
+    m_Bits: 0
+  propagationRadius: 0
+  maxTargets: 0
+  stunTime: 0
+  startAudio: {fileID: 0}
+  activeAudio: {fileID: 0}
+  endAudio: {fileID: 0}
+  startParticleSystem: {fileID: 0}
+  activeParticleSystem: {fileID: 7862300127514338041, guid: e39db63b8eb56b44f8c2fe2a437db758, type: 3}
+  endParticleSystem: {fileID: 0}
+  startTrail: {fileID: 0}
+  activeTrail: {fileID: 0}
+  endTrail: {fileID: 0}
