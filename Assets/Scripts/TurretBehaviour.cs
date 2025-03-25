@@ -44,6 +44,7 @@ public class TurretBehaviour : MonoBehaviour
     public float moveSpeed;
     public Rigidbody rb;
     private List<Transform> enemies;
+    public float autoTargetingRange;
 
     void Awake()
     {
@@ -159,11 +160,11 @@ public class TurretBehaviour : MonoBehaviour
             life = 0;
         }
 
-
+/*
         if(GameManager.Instance.droppedMods.Count > 0 && checkingForMods)
         {
             CheckForMod();
-        }
+        }*/
 
     }
 
@@ -176,10 +177,28 @@ public class TurretBehaviour : MonoBehaviour
         {
             GameObject obj = hit.collider.gameObject;
 
-            for (int i = 0; i < GameManager.Instance.droppedMods.Count; i++)
+            GetMod(obj);
+
+        }
+    }
+    void OnTriggerEnter(Collider other)
+    {
+        
+        GameObject obj = other.gameObject;
+
+        if(obj.layer == 6)
+        {
+            
+            GetMod(obj);
+        }
+    }
+
+    public void GetMod(GameObject obj)
+    {
+       /* for (int i = 0; i < GameManager.Instance.droppedMods.Count; i++)
             {
                 if(obj == GameManager.Instance.droppedMods[i])
-                {
+                {*/
                     newMod = obj.GetComponent<ModProfile>();
                     newMod.dropped = false;
                     GameManager.Instance.droppedMods.Remove(obj);
@@ -197,10 +216,8 @@ public class TurretBehaviour : MonoBehaviour
                         ActivateNewModCanvas();
                         ActivateCurrentModCanvas();
                     }
-                }
-            }
-
-        }
+              /*  }
+            }*/
     }
 
     Transform GetClosestEnemy()
@@ -217,10 +234,15 @@ public class TurretBehaviour : MonoBehaviour
         {
             if (enemy == null) continue; // Ignore destroyed enemies
             float sqrDistance = (enemy.position - currentPosition).sqrMagnitude;
-            if (sqrDistance < closestDistanceSqr)
+            if (sqrDistance < closestDistanceSqr && sqrDistance < autoTargetingRange)
             {
                 closestDistanceSqr = sqrDistance;
                 closestEnemy = enemy;
+                ///Debug.Log(sqrDistance);
+            }
+            else if (sqrDistance < closestDistanceSqr && sqrDistance > autoTargetingRange)
+            {
+                closestEnemy = null;
             }
         }
 
@@ -231,7 +253,7 @@ public class TurretBehaviour : MonoBehaviour
     {
         GetClosestEnemy();
 
-        if(enemies.Count == 0) return;
+        if(enemies.Count == 0 || closestEnemy == null) return;
         
 
         Vector3 orientation = closestEnemy.position-transform.position;
@@ -247,7 +269,7 @@ public class TurretBehaviour : MonoBehaviour
         direction = WorldMousePos - transform.position;
         direction.y = 0;
 
-        if(enemies.Count == 0) 
+        if(enemies.Count == 0 || closestEnemy == null ) 
         {
             targetRotation = Quaternion.LookRotation(direction);
             Canon.rotation = Quaternion.Slerp(Canon.rotation, targetRotation, rotationSpeed * Time.deltaTime);

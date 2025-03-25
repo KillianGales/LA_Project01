@@ -17,7 +17,7 @@ MonoBehaviour:
   m_damages: 1
   m_expensionRate: 0
   m_lifeSpan: 10
-  fireRate: 0.01
+  fireRate: 0.006
   behaviour: 3
   colorOverride:
     serializedVersion: 2

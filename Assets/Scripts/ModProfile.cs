@@ -29,6 +29,7 @@ public class ModProfile : MonoBehaviour
         }
         else
         {
+            GameManager.Instance.droppedMods.Remove(gameObject);
             Destroy(gameObject);
         }
     }
