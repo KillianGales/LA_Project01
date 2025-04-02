@@ -7,7 +7,7 @@ using UnityEngine.UI;
 
 public class TurretBehaviour : MonoBehaviour
 {
-    [SerializeField] private Transform Canon, Launchpad, turretBase;
+    [SerializeField] private Transform Canon, Launchpad, turretBase, body;
     [SerializeField] List<Transform> sockets;
     Vector3 direction, WorldMousePos;
     Quaternion targetRotation;
@@ -45,12 +45,13 @@ public class TurretBehaviour : MonoBehaviour
     public Rigidbody rb;
     private List<Transform> enemies;
     public float autoTargetingRange;
+    public float tiltAngle, inertiaSpeed;
 
     void Awake()
     {
-        Canon = transform.Find("Canon");
-        Launchpad = Canon.transform.Find("LaunchPad");
-        turretBase = transform.Find("Base");
+        //Canon = transform.Find("Canon");
+        //Launchpad = Canon.transform.Find("LaunchPad");
+        //turretBase = transform.Find("Base");
         laserLine = laserObj.GetComponent<LineRenderer>();
 
         for (int i = 0; i < turretBase.childCount; i++)
@@ -61,6 +62,7 @@ public class TurretBehaviour : MonoBehaviour
 
         life = baseLife;
         checkingForMods = true;
+        lastPosition = transform.position;
         
         currentModCanvas.SetActive(false);
 
@@ -163,12 +165,12 @@ public class TurretBehaviour : MonoBehaviour
 /*
         if(GameManager.Instance.droppedMods.Count > 0 && checkingForMods)
         {
-            CheckForMod();
+            CheckForModOnTouch();
         }*/
 
     }
 
-    private void CheckForMod()
+    private void CheckForModOnTouch()
     {
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         RaycastHit hit;
@@ -261,14 +263,41 @@ public class TurretBehaviour : MonoBehaviour
         targetRotation = Quaternion.LookRotation(new Vector3(orientation.x, 0, orientation.z)/*.normalized*/);
         Canon.rotation = Quaternion.Slerp(Canon.rotation, targetRotation, rotationSpeed * Time.deltaTime);
     }
-
+private Vector3 lastPosition;
+private Quaternion visualInertia;
+float compMag;
+public float inertiaResetSpeed;
     private void MoveAround()
     {
         WorldMousePos = InputManager.GetWorldMousePosition();
+        
 
         direction = WorldMousePos - transform.position;
         direction.y = 0;
+        
+        Vector3 velocity = direction - lastPosition;
+        lastPosition = direction;
+        //compMag += velocity.magnitude;
 
+        //velocity = velocity.normalized;
+        Debug.Log(compMag);
+
+        if(velocity.magnitude > 0.04f)
+        {
+            //float tiltAmount = -Vector3.Dot(velocity.normalized, transform.right) * tiltAngle;
+            //visualInertia = Quaternion.Euler(tiltAmount, 0, -tiltAmount);
+            visualInertia = Quaternion.Euler(new Vector3(-direction.z, 0, direction.x)*tiltAngle);
+            body.rotation = Quaternion.Lerp(body.rotation, visualInertia, inertiaSpeed * Time.deltaTime);
+            //compMag -= 10 * Time.deltaTime;
+        }
+        else
+        {
+            body.rotation = Quaternion.Slerp(body.rotation, Quaternion.identity, Time.deltaTime * inertiaResetSpeed);
+
+        }
+
+        
+        
         if(enemies.Count == 0 || closestEnemy == null ) 
         {
             targetRotation = Quaternion.LookRotation(direction);
@@ -278,8 +307,11 @@ public class TurretBehaviour : MonoBehaviour
         //targetRotation = Quaternion.LookRotation(-direction);
         //Canon.rotation = Quaternion.Slerp(Canon.rotation, targetRotation, rotationSpeed * Time.deltaTime);
 
+        float speedMagn = Mathf.Clamp(direction.sqrMagnitude, 0,15)/15;
+
         direction = direction.normalized;
-        rb.linearVelocity = direction * moveSpeed;
+
+        rb.linearVelocity = direction * moveSpeed * speedMagn;
     }
 
 /// <summary>
