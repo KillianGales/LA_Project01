@@ -24,7 +24,7 @@ public class TurretBehaviour : MonoBehaviour
     public float life, baseLife;
     public Image lifeRep;
     public List<Coroutine> shootRoutines = new List<Coroutine>(new Coroutine[3]);
-    private bool checkingForMods;
+    /*private bool checkingForMods;*/
     [SerializeField] public Dictionary<ModProfile,Coroutine> activeModRoutine = new Dictionary<ModProfile,Coroutine>();
     public Transform outOfBoundsBulletPool;
 
@@ -46,6 +46,17 @@ public class TurretBehaviour : MonoBehaviour
     private List<Transform> enemies;
     public float autoTargetingRange;
     public float tiltAngle, inertiaSpeed;
+    private Vector3 lastPosition;
+private Quaternion visualInertia;
+float compMag;
+public float inertiaResetSpeed;
+    public float dashAmount;
+    public float dashSpeed;
+    public bool hasDashed;
+    public float dashCooldown;
+    public float dashDuration;
+    private Vector3 dashTarget;
+    public LayerMask collisionLayer;
 
     void Awake()
     {
@@ -61,7 +72,7 @@ public class TurretBehaviour : MonoBehaviour
         }
 
         life = baseLife;
-        checkingForMods = true;
+        //checkingForMods = true;
         lastPosition = transform.position;
         
         currentModCanvas.SetActive(false);
@@ -83,8 +94,6 @@ public class TurretBehaviour : MonoBehaviour
                 InitBulletType(activeMods[i], true, i);
             }
         }
-
-        //StartCoroutine(EAutoShoot());
     }
 
     private void InitBulletType(ModProfile curModData, bool isStart, int index)
@@ -162,12 +171,56 @@ public class TurretBehaviour : MonoBehaviour
             life = 0;
         }
 
+        if(Input.GetMouseButtonDown(0))
+        {
+            if(!hasDashed)
+            {
+                CheckDashSpace();
+                
+            }
+        }
 /*
         if(GameManager.Instance.droppedMods.Count > 0 && checkingForMods)
         {
             CheckForModOnTouch();
         }*/
 
+    }
+    IEnumerator Dash()
+    {
+        float elapsed = 0f;
+        hasDashed = true;
+        while (elapsed < dashDuration)
+        {
+            float t = elapsed / dashDuration;
+            transform.position = Vector3.Lerp(transform.position, dashTarget , t * dashSpeed);
+            //transform.position = Vector3.Lerp(transform.position, transform.position + (direction /** dashAmount*/) , t /* dashSpeed*/);
+            
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+        //transform.position +( direction * dashAmount);
+        yield return new WaitForSeconds(dashCooldown);
+        hasDashed = false;
+    }
+
+    public void CheckDashSpace()
+    {
+        RaycastHit hit;
+        //Debug.DrawLine(Launchpad.position, Launchpad.position + (direction * dashAmount),Color.red, 10);
+
+        if (Physics.Raycast(Launchpad.position, direction, out hit, dashAmount, collisionLayer))
+        {
+            dashTarget = new Vector3(hit.point.x, transform.position.y, hit.point.z);
+            
+        }
+        else
+        {
+            dashTarget = transform.position + direction * dashAmount;
+        }
+
+        StartCoroutine(Dash());
+        
     }
 
     private void CheckForModOnTouch()
@@ -193,33 +246,31 @@ public class TurretBehaviour : MonoBehaviour
             
             GetMod(obj);
         }
+        else if (obj.layer == 9)
+        {
+            HealSelf(obj);
+        }
     }
 
     public void GetMod(GameObject obj)
     {
-       /* for (int i = 0; i < GameManager.Instance.droppedMods.Count; i++)
-            {
-                if(obj == GameManager.Instance.droppedMods[i])
-                {*/
-                    newMod = obj.GetComponent<ModProfile>();
-                    newMod.dropped = false;
-                    GameManager.Instance.droppedMods.Remove(obj);
+        newMod = obj.GetComponent<ModProfile>();
+        newMod.dropped = false;
+        GameManager.Instance.droppedMods.Remove(obj);
 
-                    if(activeMods.Count<3)
-                    {
-                        ModPickup(newMod);
-                    }
-                    else if (activeMods.Count>=3)
-                    {
-                        GameManager.Instance.TimePause();
-                        checkingForMods = false;
-                        UIDisplayNewMod(newMod.bulletType);
-                        DeactivatePauseButton();
-                        ActivateNewModCanvas();
-                        ActivateCurrentModCanvas();
-                    }
-              /*  }
-            }*/
+        if(activeMods.Count<3)
+        {
+            ModPickup(newMod);
+        }
+        else if (activeMods.Count>=3)
+        {
+            GameManager.Instance.TimePause();
+            //checkingForMods = false;
+            UIDisplayNewMod(newMod.bulletType);
+            DeactivatePauseButton();
+            ActivateNewModCanvas();
+            ActivateCurrentModCanvas();
+        }
     }
 
     Transform GetClosestEnemy()
@@ -263,10 +314,7 @@ public class TurretBehaviour : MonoBehaviour
         targetRotation = Quaternion.LookRotation(new Vector3(orientation.x, 0, orientation.z)/*.normalized*/);
         Canon.rotation = Quaternion.Slerp(Canon.rotation, targetRotation, rotationSpeed * Time.deltaTime);
     }
-private Vector3 lastPosition;
-private Quaternion visualInertia;
-float compMag;
-public float inertiaResetSpeed;
+
     private void MoveAround()
     {
         WorldMousePos = InputManager.GetWorldMousePosition();
@@ -280,7 +328,7 @@ public float inertiaResetSpeed;
         //compMag += velocity.magnitude;
 
         //velocity = velocity.normalized;
-        Debug.Log(compMag);
+        //Debug.Log(compMag);
 
         if(velocity.magnitude > 0.04f)
         {
@@ -499,29 +547,36 @@ private float lastDamageTime = 0f;
         Debug.Log("Starting the " + (activeMods.Count-1) + "th coroutine");
         
     }
+
+    public void HealSelf(GameObject obj)
+    {
+        HealItem healItem = obj.GetComponent<HealItem>();
+        float amount = healItem.healAmount;
+        life += amount;
+        healItem.healAmount -= amount;
+        Destroy(obj);
+    }
+
+
     public void OpenPauseMenu()
     {
-        checkingForMods = false;
         ActivateCurrentModCanvas();
         Time.timeScale = 0.0f;
     }
     public void ClosePauseMenu()
     {
-        checkingForMods = true;
         DeactivateCurrentModCanvas();
         Time.timeScale = 1.0f;
     }
 
     public void OpenSwitchMenu()
     {
-        checkingForMods = false;
         ActivateCurrentModCanvas();
         ActivateNewModCanvas();
         Time.timeScale = 0.0f;
     }
     public void CloseSwitchMenu()
     {
-        checkingForMods = true;
         DeactivateCurrentModCanvas();
         DeactivateNewModCanvas();
         Time.timeScale = 1.0f;
@@ -546,7 +601,7 @@ private float lastDamageTime = 0f;
     public void DeactivateNewModCanvas()
     {
         NewModCanvas.SetActive(false);
-        checkingForMods = true;
+        //checkingForMods = true;
         Time.timeScale = 1.0f;
     }
 
@@ -572,7 +627,7 @@ private float lastDamageTime = 0f;
         //activeMods[index].gameObject;
         //StopSpecificBullet();
         if(!newMod) return;
-        checkingForMods = true;
+        //checkingForMods = true;
         newMod.gameObject.layer = 0;
         Destroy(sockets[index].GetChild(0).gameObject);
         activeMods[index] = newMod;
@@ -584,7 +639,7 @@ private float lastDamageTime = 0f;
     {
         if(!newMod) return;
         Destroy(newMod.gameObject);
-        checkingForMods = true;
+        //checkingForMods = true;
     }
 
 }

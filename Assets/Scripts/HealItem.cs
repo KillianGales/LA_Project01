@@ -1,19 +1,13 @@
 using UnityEngine;
 
-public class ModProfile : MonoBehaviour
+public class HealItem : MonoBehaviour
 {
-    public EmodTypes type;
-    
-    public BulletType bulletType;
-    //public float fireRate;
+    public float healAmount;
     public float lifeSpan;
-    public bool dropped;
-    [Range (0,1)]
-    public int origin;
 
     public void Update()
     {
-        if(dropped) CheckLife();
+        CheckLife();
     }
 
     private void CheckLife()

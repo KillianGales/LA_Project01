@@ -86,7 +86,7 @@ public class GameManager : MonoBehaviour
                 {
                     GameObject newMod = Instantiate(mod.mod, dropPos.position, dropPos.rotation, transform );
                     //allMods.Remove(mod);
-                    AddModToPool(newMod);
+                    //AddModToPool(newMod);
                     return;
                 }
 
@@ -98,7 +98,7 @@ public class GameManager : MonoBehaviour
     public void AddModToPool(GameObject newMod)
     {
         newMod.GetComponent<ModProfile>().dropped = true;
-        droppedMods.Add(newMod);
+        //droppedMods.Add(newMod);
     }
 
   /*  public void GetStartingRound (int i)

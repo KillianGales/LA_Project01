@@ -102,7 +102,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   type: 1
   bulletType: {fileID: 11400000, guid: 387e680a21d880c4285c88dcd3c0a4b8, type: 2}
-  lifeSpan: 12
+  lifeSpan: 10
   dropped: 0
   origin: 0
 --- !u!136 &144424561492510655
